@@ -82,6 +82,16 @@
         display: none;
       }
 
+      /* תמונה בכותרת */
+      .title-image {
+        display: block;
+        margin: 0 auto 20px;
+        max-width: 400px;
+        width: 100%;
+        border-radius: 15px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+      }
+
       /* כותרת יצירות */
       .creations-title {
         text-align: center;
@@ -107,10 +117,13 @@
         padding: 25px;
         border: 1px solid rgba(56, 189, 248, 0.1);
         cursor: pointer;
+        transition: all 0.3s ease;
       }
 
       .creation-card:hover {
         background: rgba(56, 189, 248, 0.1);
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(56, 189, 248, 0.2);
       }
 
       .creation-name {
@@ -181,10 +194,12 @@
         color: #fff;
         font-size: 18px;
         cursor: pointer;
+        transition: all 0.3s ease;
       }
 
       .option-btn:hover {
         background: rgba(56, 189, 248, 0.1);
+        transform: translateY(-2px);
       }
 
       .option-icon {
@@ -219,6 +234,12 @@
         font-weight: 700;
         font-size: 16px;
         cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .back-btn:hover {
+        background: #0ea5e9;
+        transform: translateY(-2px);
       }
 
       /* כפתור התנתקות */
@@ -238,6 +259,12 @@
         font-weight: 600;
         font-size: 16px;
         cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .logout-btn:hover {
+        background: rgba(255, 255, 255, 0.2);
+        transform: translateY(-2px);
       }
 
       /* קיצורי מקלדת */
@@ -265,6 +292,13 @@
 
     <!-- מסך ראשי אחרי התחברות -->
     <div class="main-container" id="mainContainer">
+      <!-- תמונה בכותרת -->
+      <img 
+        src="https://photos.fife.usercontent.google.com/pw/AP1GczO3A90Ud2XpuzAbYOBsVSMTcQbW6XMLWE9HOE4lQQxGCs9H2lE-c0BN=w1062-h298-s-no-gm?authuser=0" 
+        alt="כותרת יצירות" 
+        class="title-image"
+      />
+
       <!-- כותרת יצירות -->
       <h2 class="creations-title">יצירות</h2>
 
