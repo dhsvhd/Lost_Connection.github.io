@@ -507,6 +507,64 @@
         box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
         z-index: 1001;
         animation: slideIn 0.3s ease;
+        font-family: "Segoe UI", system-ui, Arial;
+      }
+
+      .emergency-notification {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(15, 23, 42, 0.95);
+        z-index: 9999;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        animation: fadeIn 0.5s ease;
+      }
+
+      .emergency-content {
+        background: linear-gradient(135deg, #0f172a, #1e293b);
+        padding: 40px;
+        border-radius: 20px;
+        text-align: center;
+        max-width: 500px;
+        width: 90%;
+        border: 4px solid #38bdf8;
+        box-shadow: 0 0 30px rgba(56, 189, 248, 0.6);
+        animation: pulse 2s infinite;
+      }
+
+      .emergency-title {
+        font-size: 32px;
+        color: #38bdf8;
+        margin-bottom: 15px;
+        font-weight: 800;
+      }
+
+      .emergency-message {
+        font-size: 20px;
+        color: #fff;
+        margin-bottom: 25px;
+        line-height: 1.6;
+      }
+
+      .emergency-close {
+        padding: 15px 30px;
+        background: #38bdf8;
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-size: 18px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s;
+      }
+
+      .emergency-close:hover {
+        background: #0ea5e9;
+        transform: scale(1.05);
       }
 
       .event-type-badge {
@@ -526,6 +584,27 @@
         to {
           transform: translateX(0);
           opacity: 1;
+        }
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      @keyframes pulse {
+        0% {
+          box-shadow: 0 0 0 0 rgba(56, 189, 248, 0.4);
+        }
+        70% {
+          box-shadow: 0 0 0 15px rgba(56, 189, 248, 0);
+        }
+        100% {
+          box-shadow: 0 0 0 0 rgba(56, 189, 248, 0);
         }
       }
 
@@ -551,6 +630,41 @@
         padding: 10px 20px;
         cursor: pointer;
         font-weight: 600;
+      }
+
+      .reminder-settings {
+        background: rgba(56, 189, 248, 0.1);
+        border-radius: 10px;
+        padding: 20px;
+        margin: 20px 0;
+      }
+
+      .reminder-options {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 15px;
+        justify-content: center;
+      }
+
+      .reminder-option-btn {
+        padding: 8px 15px;
+        background: rgba(56, 189, 248, 0.2);
+        color: #38bdf8;
+        border: 1px solid #38bdf8;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.3s;
+      }
+
+      .reminder-option-btn.active {
+        background: #38bdf8;
+        color: white;
+      }
+
+      .reminder-option-btn:hover {
+        background: #38bdf8;
+        color: white;
       }
     </style>
   </head>
@@ -697,7 +811,7 @@
         },
       ];
 
-      // אירועי לוח שנה (מופעל בהתחלה)
+      // אירועי לוח שנה
       let calendarEvents = JSON.parse(
         localStorage.getItem("calendarEvents")
       ) || [
@@ -737,6 +851,129 @@
       let currentMonth = new Date().getMonth();
       let currentYear = new Date().getFullYear();
       let notificationPermission = false;
+      let reminderMinutesBefore = 60; // תזכורת שעה לפני ברירת מחדל
+
+      // צליל תזכורת עדין
+      function createGentleReminderSound() {
+        try {
+          const audioContext = new (window.AudioContext ||
+            window.webkitAudioContext)();
+
+          // צור צליל נעים
+          const oscillator = audioContext.createOscillator();
+          const gainNode = audioContext.createGain();
+
+          oscillator.connect(gainNode);
+          gainNode.connect(audioContext.destination);
+
+          // צליל נעים של פעמון
+          oscillator.frequency.setValueAtTime(523.25, audioContext.currentTime); // דו גבוה
+          oscillator.frequency.exponentialRampToValueAtTime(
+            392.0,
+            audioContext.currentTime + 0.5
+          ); // סול
+
+          oscillator.type = "sine";
+
+          // עוצמה נעימה
+          gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+          gainNode.gain.exponentialRampToValueAtTime(
+            0.01,
+            audioContext.currentTime + 1
+          );
+
+          oscillator.start(audioContext.currentTime);
+          oscillator.stop(audioContext.currentTime + 1); // שנייה אחת
+
+          return audioContext;
+        } catch (error) {
+          console.error("לא ניתן ליצור צליל תזכורת:", error);
+          return null;
+        }
+      }
+
+      // התראה על מסך מלא - עם תמונה של הלהקה
+      function showEmergencyReminder(reminder) {
+        // סמן ששלחנו תזכורת
+        reminder.notified = true;
+        localStorage.setItem("reminders", JSON.stringify(reminders));
+
+        // צור התראה על מסך מלא
+        const emergencyAlert = document.createElement("div");
+        emergencyAlert.className = "emergency-notification";
+        emergencyAlert.innerHTML = `
+                <div class="emergency-content">
+                    <div style="width: 100px; height: 100px; margin: 0 auto 20px; border-radius: 15px; overflow: hidden; border: 3px solid #38bdf8;">
+                        <img src="https://i.ibb.co/KxZZxtgN/Lost-Connection-Band-Israel.jpg" 
+                             alt="Lost Connection Band" 
+                             style="width: 100%; height: 100%; object-fit: cover;">
+                    </div>
+                    <h2 class="emergency-title" style="color: #fff;">תזכורת לאירוע</h2>
+                    <p class="emergency-message" style="color: #fff; font-size: 20px;">
+                        <strong style="color: #38bdf8; font-size: 24px;">${reminder.description}</strong><br>
+                        <span style="font-size: 22px; margin-top: 10px; display: block;">
+                            מתחיל בשעה ${reminder.time}
+                        </span>
+                    </p>
+                    <button class="emergency-close" onclick="this.closest('.emergency-notification').remove()" style="margin-top: 20px;">
+                        סגור
+                    </button>
+                </div>
+            `;
+
+        document.body.appendChild(emergencyAlert);
+
+        // השמע צליל תזכורת עדין
+        createGentleReminderSound();
+
+        // רעד עדין אם אפשר
+        if (navigator.vibrate) {
+          navigator.vibrate([300, 100, 300]);
+        }
+
+        // גם שלח התראה מערכתית עם אותה תמונה
+        if ("Notification" in window && Notification.permission === "granted") {
+          const notification = new Notification(
+            "🎵 Lost Connection Band - תזכורת",
+            {
+              body: `${reminder.description} מתחיל בשעה ${reminder.time}`,
+              icon: "https://i.ibb.co/KxZZxtgN/Lost-Connection-Band-Israel.jpg",
+              tag: `reminder-${reminder.eventId}`,
+              requireInteraction: false,
+              silent: false,
+              vibrate: [200, 100, 200],
+            }
+          );
+
+          notification.onclick = function () {
+            window.focus();
+            this.close();
+          };
+        }
+
+        // סגור אוטומטית אחרי 60 שניות
+        setTimeout(() => {
+          if (emergencyAlert.parentNode) {
+            emergencyAlert.parentNode.removeChild(emergencyAlert);
+          }
+        }, 60000);
+      }
+
+      // בדוק תזכורות שהגיע זמנן
+      function checkReminders() {
+        const now = new Date().getTime();
+
+        for (const key in reminders) {
+          const reminder = reminders[key];
+
+          if (!reminder.notified && reminder.reminderTime <= now) {
+            showEmergencyReminder(reminder);
+          }
+        }
+      }
+
+      // בדוק תזכורות כל 30 שניות
+      setInterval(checkReminders, 30000);
 
       // התחברות
       function login() {
@@ -786,11 +1023,17 @@
               : "";
 
           document.getElementById("userWelcome").innerHTML = `
-                          ${adminBadge}${lidorBadge}${natanelBadge}${nitzanBadge}${eliorBadge}${yinonBadge}👋 ${user.welcome}
-                          <div style="font-size: 14px; color: #94a3b8; margin-top: 5px;">
-                              תפקיד: ${user.role} | כלי: ${user.instrument}
-                          </div>
-                      `;
+                    ${adminBadge}${lidorBadge}${natanelBadge}${nitzanBadge}${eliorBadge}${yinonBadge}👋 ${user.welcome}
+                    <div style="font-size: 14px; color: #94a3b8; margin-top: 5px;">
+                        תפקיד: ${user.role} | כלי: ${user.instrument}
+                    </div>
+                `;
+
+          // בדוק תזכורות אחרי התחברות
+          setTimeout(checkReminders, 1000);
+
+          // בקש הרשאות התראות
+          requestNotificationPermission();
         } else {
           errorAlert.textContent = "שם משתמש או סיסמה לא נכונים";
           errorAlert.style.display = "block";
@@ -860,309 +1103,306 @@
         const embedUrl = `https://www.youtube.com/embed/${videoId}`;
 
         const page = `
-                      <div class="page-content">
-                          <button class="back-btn" onclick="closePage()">← חזרה לרשימה</button>
+                <div class="page-content">
+                    <button class="back-btn" onclick="closePage()">← חזרה לרשימה</button>
 
-                          <div class="user-info" style="margin-bottom: 20px;">
-                              ${
-                                isAdmin
-                                  ? '<span class="admin-badge">👑 מנהל</span>'
-                                  : ""
-                              }
-                              ${
-                                isLidor
-                                  ? '<span class="special-badge">🎵 אלט</span>'
-                                  : ""
-                              }
-                              ${
-                                isNatanel
-                                  ? '<span class="special-badge" style="background: linear-gradient(135deg, #10b981, #059669);">🎵 טנור</span>'
-                                  : ""
-                              }
-                              ${
-                                isNitzan
-                                  ? '<span class="special-badge" style="background: linear-gradient(135deg, #ec4899, #db2777);">🎵 בריטון ראשון</span>'
-                                  : ""
-                              }
-                              ${
-                                isElior
-                                  ? '<span class="special-badge" style="background: linear-gradient(135deg, #3b82f6, #1d4ed8);">🎵 בריטון שני</span>'
-                                  : ""
-                              }
-                              ${
-                                isYinon
-                                  ? '<span class="special-badge" style="background: linear-gradient(135deg, #f97316, #ea580c);">🥁 תופים</span>'
-                                  : ""
-                              }
-                              👤 ${currentUser.name} - ${currentUser.role}
-                          </div>
+                    <div class="user-info" style="margin-bottom: 20px;">
+                        ${
+                          isAdmin
+                            ? '<span class="admin-badge">👑 מנהל</span>'
+                            : ""
+                        }
+                        ${
+                          isLidor
+                            ? '<span class="special-badge">🎵 אלט</span>'
+                            : ""
+                        }
+                        ${
+                          isNatanel
+                            ? '<span class="special-badge" style="background: linear-gradient(135deg, #10b981, #059669);">🎵 טנור</span>'
+                            : ""
+                        }
+                        ${
+                          isNitzan
+                            ? '<span class="special-badge" style="background: linear-gradient(135deg, #ec4899, #db2777);">🎵 בריטון ראשון</span>'
+                            : ""
+                        }
+                        ${
+                          isElior
+                            ? '<span class="special-badge" style="background: linear-gradient(135deg, #3b82f6, #1d4ed8);">🎵 בריטון שני</span>'
+                            : ""
+                        }
+                        ${
+                          isYinon
+                            ? '<span class="special-badge" style="background: linear-gradient(135deg, #f97316, #ea580c);">🥁 תופים</span>'
+                            : ""
+                        }
+                        👤 ${currentUser.name} - ${currentUser.role}
+                    </div>
 
-                          <h2 style="color: #38bdf8; text-align: center; margin-bottom: 30px;">🎵 SHAPE OF YOU - Ed Sheeran</h2>
+                    <h2 style="color: #38bdf8; text-align: center; margin-bottom: 30px;">🎵 SHAPE OF YOU - Ed Sheeran</h2>
 
-                          <div class="your-banner" style="max-width: 800px; margin: 30px auto;">
-                              <img src="https://i.ibb.co/KxZZxtgN/Lost-Connection-Band-Israel.jpg" alt="Lost Connection Band" />
-                          </div>
+                    <div class="your-banner" style="max-width: 800px; margin: 30px auto;">
+                        <img src="https://i.ibb.co/KxZZxtgN/Lost-Connection-Band-Israel.jpg" alt="Lost Connection Band" />
+                    </div>
 
-                          <div class="content-box">
-                              <div style="font-size: 60px; margin-bottom: 20px;">📄</div>
-                              <h3 style="color: #38bdf8; margin-bottom: 15px;">PDF אישי של ${
-                                currentUser.name
-                              }</h3>
-                              <p style="color: #94a3b8; margin-bottom: 25px;">
-                                  תפקיד: ${currentUser.role}<br>
-                                  כלי: ${currentUser.instrument}<br>
-                                  <span style="color: #38bdf8; font-weight: 600;">הקובץ מותאם אישית עבורך!</span>
-                              </p>
+                    <div class="content-box">
+                        <div style="font-size: 60px; margin-bottom: 20px;">📄</div>
+                        <h3 style="color: #38bdf8; margin-bottom: 15px;">PDF אישי של ${
+                          currentUser.name
+                        }</h3>
+                        <p style="color: #94a3b8; margin-bottom: 25px;">
+                            תפקיד: ${currentUser.role}<br>
+                            כלי: ${currentUser.instrument}<br>
+                            <span style="color: #38bdf8; font-weight: 600;">הקובץ מותאם אישית עבורך!</span>
+                        </p>
 
-                              <div style="margin: 30px 0;">
-                                  ${
-                                    hasPdf
-                                      ? `<a href="${currentUser.pdfUrl}" target="_blank" class="action-btn view-btn">
-                                            👁️ פתח PDF בדפדפן
-                                        </a>
+                        <div style="margin: 30px 0;">
+                            ${
+                              hasPdf
+                                ? `<a href="${currentUser.pdfUrl}" target="_blank" class="action-btn view-btn">
+                                    👁️ פתח PDF בדפדפן
+                                </a>
+                                <a href="${currentUser.pdfUrl}" download="Shape-Of-You-${currentUser.name}.pdf" class="action-btn download-btn">
+                                    ⬇️ הורד PDF אישי
+                                </a>`
+                                : `<button class="action-btn disabled-btn" disabled>
+                                    👁️ פתח PDF בדפדפן
+                                </button>
+                                <button class="action-btn disabled-btn" disabled>
+                                    ⬇️ הורד PDF אישי
+                                </button>`
+                            }
+                            
+                            ${
+                              hasAudioVideo
+                                ? `
+                                <button class="action-btn audio-video-btn" onclick="showAudioVideo()">
+                                    🎵 PDF+שמע
+                                </button>`
+                                : ""
+                            }
+                        </div>
 
-                                        <a href="${currentUser.pdfUrl}" download="Shape-Of-You-${currentUser.name}.pdf" class="action-btn download-btn">
-                                            ⬇️ הורד PDF אישי
-                                        </a>`
-                                      : `<button class="action-btn disabled-btn" disabled>
-                                            👁️ פתח PDF בדפדפן
-                                        </button>
+                        ${
+                          !hasPdf
+                            ? `<p style="color: #f87171; padding: 15px; background: rgba(239,68,68,0.1); border-radius: 10px; margin-top: 20px;">
+                                ⚠️ PDF אישי לא זמין כרגע. אנא עדכן את הקישור בקוד.
+                            </p>`
+                            : ""
+                        }
+                    </div>
 
-                                        <button class="action-btn disabled-btn" disabled>
-                                            ⬇️ הורד PDF אישי
-                                        </button>`
-                                  }
-                                  
-                                  ${
-                                    hasAudioVideo
-                                      ? `
-                                  <button class="action-btn audio-video-btn" onclick="showAudioVideo()">
-                                      🎵 PDF+שמע
-                                  </button>`
-                                      : ""
-                                  }
-                              </div>
+                    <!-- אזור PDF+שמע (מוסתר תחילה) -->
+                    <div id="audioVideoSection" style="display: none;">
+                        <div class="content-box">
+                            <h3 style="color: #38bdf8; margin-bottom: 20px;">🎵 PDF + שמע - גרסה מלאה</h3>
+                            <p style="color: #94a3b8; margin-bottom: 20px;">
+                                כאן ניתן לצפות בווידאו המלא עם השמע ולפתוח את ה-PDF במקביל.<br>
+                                <span style="color: ${
+                                  isAdmin
+                                    ? "#f59e0b"
+                                    : isLidor
+                                    ? "#8b5cf6"
+                                    : isNatanel
+                                    ? "#10b981"
+                                    : isNitzan
+                                    ? "#ec4899"
+                                    : isElior
+                                    ? "#3b82f6"
+                                    : isYinon
+                                    ? "#f97316"
+                                    : "#38bdf8"
+                                }; font-weight: 600;">
+                                    ${
+                                      isAdmin
+                                        ? "גישה למנהל המערכת"
+                                        : isLidor
+                                        ? "גישה לסקסופון אלט"
+                                        : isNatanel
+                                        ? "גישה לסקסופון טנור"
+                                        : isNitzan
+                                        ? "גישה לבריטון ראשון"
+                                        : isElior
+                                        ? "גישה לבריטון שני"
+                                        : isYinon
+                                        ? "גישה לתופים"
+                                        : "גישה רגילה"
+                                    }
+                                </span>
+                            </p>
 
-                              ${
-                                !hasPdf
-                                  ? `
-                                  <p style="color: #f87171; padding: 15px; background: rgba(239,68,68,0.1); border-radius: 10px; margin-top: 20px;">
-                                      ⚠️ PDF אישי לא זמין כרגע. אנא עדכן את הקישור בקוד.
-                                  </p>`
-                                  : ""
-                              }
-                          </div>
+                            <div class="video-container">
+                                <iframe 
+                                    src="${embedUrl}" 
+                                    title="Shape Of You - Lost Connection Band" 
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                                    allowfullscreen>
+                                </iframe>
+                            </div>
 
-                          <!-- אזור PDF+שמע (מוסתר תחילה) -->
-                          <div id="audioVideoSection" style="display: none;">
-                              <div class="content-box">
-                                  <h3 style="color: #38bdf8; margin-bottom: 20px;">🎵 PDF + שמע - גרסה מלאה</h3>
-                                  <p style="color: #94a3b8; margin-bottom: 20px;">
-                                      כאן ניתן לצפות בווידאו המלא עם השמע ולפתוח את ה-PDF במקביל.<br>
-                                      <span style="color: ${
-                                        isAdmin
-                                          ? "#f59e0b"
-                                          : isLidor
-                                          ? "#8b5cf6"
-                                          : isNatanel
-                                          ? "#10b981"
-                                          : isNitzan
-                                          ? "#ec4899"
-                                          : isElior
-                                          ? "#3b82f6"
-                                          : isYinon
-                                          ? "#f97316"
-                                          : "#38bdf8"
-                                      }; font-weight: 600;">
-                                          ${
-                                            isAdmin
-                                              ? "גישה למנהל המערכת"
-                                              : isLidor
-                                              ? "גישה לסקסופון אלט"
-                                              : isNatanel
-                                              ? "גישה לסקסופון טנור"
-                                              : isNitzan
-                                              ? "גישה לבריטון ראשון"
-                                              : isElior
-                                              ? "גישה לבריטון שני"
-                                              : isYinon
-                                              ? "גישה לתופים"
-                                              : "גישה רגילה"
-                                          }
-                                      </span>
-                                  </p>
+                            <div style="margin-top: 30px;">
+                                <a href="${
+                                  currentUser.pdfUrl
+                                }" target="_blank" class="action-btn view-btn">
+                                    📄 פתח PDF במקביל לצפייה
+                                </a>
+                                <a href="${audioVideoUrl}" target="_blank" class="action-btn audio-video-btn">
+                                    ↗️ פתח ביוטיוב מלא
+                                </a>
+                            </div>
 
-                                  <div class="video-container">
-                                      <iframe 
-                                          src="${embedUrl}" 
-                                          title="Shape Of You - Lost Connection Band" 
-                                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                                          allowfullscreen>
-                                      </iframe>
-                                  </div>
+                            <div style="margin-top: 25px; padding: 15px; background: ${
+                              isAdmin
+                                ? "rgba(245,158,11,0.1)"
+                                : isLidor
+                                ? "rgba(139,92,246,0.1)"
+                                : isNatanel
+                                ? "rgba(16,185,129,0.1)"
+                                : isNitzan
+                                ? "rgba(236,72,153,0.1)"
+                                : isElior
+                                ? "rgba(59,130,246,0.1)"
+                                : isYinon
+                                ? "rgba(249,115,22,0.1)"
+                                : "rgba(56,189,248,0.1)"
+                            }; border-radius: 10px;">
+                                <p style="color: ${
+                                  isAdmin
+                                    ? "#f59e0b"
+                                    : isLidor
+                                    ? "#c4b5fd"
+                                    : isNatanel
+                                    ? "#6ee7b7"
+                                    : isNitzan
+                                    ? "#f9a8d4"
+                                    : isElior
+                                    ? "#93c5fd"
+                                    : isYinon
+                                    ? "#fdba74"
+                                    : "#38bdf8"
+                                }; font-size: 14px;">
+                                    💡 טיפ: פתח את ה-PDF בחלון נפרד וצפה בסרטון במקביל לתרגול האינטראקציה.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
 
-                                  <div style="margin-top: 30px;">
-                                      <a href="${
-                                        currentUser.pdfUrl
-                                      }" target="_blank" class="action-btn view-btn">
-                                          📄 פתח PDF במקביל לצפייה
-                                      </a>
-                                      <a href="${audioVideoUrl}" target="_blank" class="action-btn audio-video-btn">
-                                          ↗️ פתח ביוטיוב מלא
-                                      </a>
-                                  </div>
+                    <!-- קרדיטים -->
+                    <div class="content-box">
+                        <h3 style="color: #38bdf8; margin-bottom: 20px;">🎵 חברי הלהקה</h3>
 
-                                  <div style="margin-top: 25px; padding: 15px; background: ${
-                                    isAdmin
-                                      ? "rgba(245,158,11,0.1)"
-                                      : isLidor
-                                      ? "rgba(139,92,246,0.1)"
-                                      : isNatanel
-                                      ? "rgba(16,185,129,0.1)"
-                                      : isNitzan
-                                      ? "rgba(236,72,153,0.1)"
-                                      : isElior
-                                      ? "rgba(59,130,246,0.1)"
-                                      : isYinon
-                                      ? "rgba(249,115,22,0.1)"
-                                      : "rgba(56,189,248,0.1)"
-                                  }; border-radius: 10px;">
-                                      <p style="color: ${
-                                        isAdmin
-                                          ? "#f59e0b"
-                                          : isLidor
-                                          ? "#c4b5fd"
-                                          : isNatanel
-                                          ? "#6ee7b7"
-                                          : isNitzan
-                                          ? "#f9a8d4"
-                                          : isElior
-                                          ? "#93c5fd"
-                                          : isYinon
-                                          ? "#fdba74"
-                                          : "#38bdf8"
-                                      }; font-size: 14px;">
-                                          💡 טיפ: פתח את ה-PDF בחלון נפרד וצפה בסרטון במקביל לתרגול האינטראקציה.
-                                      </p>
-                                  </div>
-                              </div>
-                          </div>
-
-                          <!-- קרדיטים -->
-                          <div class="content-box">
-                              <h3 style="color: #38bdf8; margin-bottom: 20px;">🎵 חברי הלהקה</h3>
-
-                              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin: 25px 0;">
-                                  ${users
-                                    .map(
-                                      (user) => `
-                                      <div style="background: ${
-                                        user.name === currentUser.name
-                                          ? "rgba(56,189,248,0.2)"
-                                          : user.name === "אדמין"
-                                          ? "rgba(245,158,11,0.2)"
-                                          : user.name === "לידור"
-                                          ? "rgba(139,92,246,0.2)"
-                                          : user.name === "נתנאל"
-                                          ? "rgba(16,185,129,0.2)"
-                                          : user.name === "ניצן"
-                                          ? "rgba(236,72,153,0.2)"
-                                          : user.name === "אליאור"
-                                          ? "rgba(59,130,246,0.2)"
-                                          : user.name === "ינון"
-                                          ? "rgba(249,115,22,0.2)"
-                                          : "rgba(255,255,255,0.05)"
-                                      };
-                                          padding: 15px; border-radius: 10px; text-align: center; border: ${
-                                            user.name === currentUser.name
-                                              ? "2px solid #38bdf8"
-                                              : user.name === "אדמין"
-                                              ? "2px solid #f59e0b"
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin: 25px 0;">
+                            ${users
+                              .map(
+                                (user) => `
+                                <div style="background: ${
+                                  user.name === currentUser.name
+                                    ? "rgba(56,189,248,0.2)"
+                                    : user.name === "אדמין"
+                                    ? "rgba(245,158,11,0.2)"
+                                    : user.name === "לידור"
+                                    ? "rgba(139,92,246,0.2)"
+                                    : user.name === "נתנאל"
+                                    ? "rgba(16,185,129,0.2)"
+                                    : user.name === "ניצן"
+                                    ? "rgba(236,72,153,0.2)"
+                                    : user.name === "אליאור"
+                                    ? "rgba(59,130,246,0.2)"
+                                    : user.name === "ינון"
+                                    ? "rgba(249,115,22,0.2)"
+                                    : "rgba(255,255,255,0.05)"
+                                };
+                                    padding: 15px; border-radius: 10px; text-align: center; border: ${
+                                      user.name === currentUser.name
+                                        ? "2px solid #38bdf8"
+                                        : user.name === "אדמין"
+                                        ? "2px solid #f59e0b"
+                                        : user.name === "לידור"
+                                        ? "2px solid #8b5cf6"
+                                        : user.name === "נתנאל"
+                                        ? "2px solid #10b981"
+                                        : user.name === "ניצן"
+                                        ? "2px solid #ec4899"
+                                        : user.name === "אליאור"
+                                        ? "2px solid #3b82f6"
+                                        : user.name === "ינון"
+                                        ? "2px solid #f97316"
+                                        : "none"
+                                    };">
+                                    <div style="color: ${
+                                      user.name === currentUser.name
+                                        ? "#fff"
+                                        : user.name === "אדמין"
+                                        ? "#fbbf24"
+                                        : user.name === "לידור"
+                                        ? "#c4b5fd"
+                                        : user.name === "נתנאל"
+                                        ? "#6ee7b7"
+                                        : user.name === "ניצן"
+                                        ? "#f9a8d4"
+                                        : user.name === "אליאור"
+                                        ? "#93c5fd"
+                                        : user.name === "ינון"
+                                        ? "#fdba74"
+                                        : "#38bdf8"
+                                    }; font-weight: 600; font-size: 18px;">
+                                        ${user.name} ${
+                                  user.name === currentUser.name
+                                    ? "👈"
+                                    : user.name === "אדמין"
+                                    ? "👑"
+                                    : ""
+                                }
+                                    </div>
+                                    <div style="color: #94a3b8; font-size: 14px;">${
+                                      user.role
+                                    }</div>
+                                    ${
+                                      user.pdfUrl &&
+                                      user.pdfUrl.includes(
+                                        "drive.google.com"
+                                      ) &&
+                                      user.name === currentUser.name
+                                        ? `<div style="color: #10b981; font-size: 12px; margin-top: 5px;">✓ PDF זמין</div>`
+                                        : ""
+                                    }
+                                    ${
+                                      user.name === "אדמין" ||
+                                      user.name === "לידור" ||
+                                      user.name === "נתנאל" ||
+                                      user.name === "ניצן" ||
+                                      user.name === "אליאור" ||
+                                      user.name === "ינון"
+                                        ? `<div style="color: ${
+                                            user.name === "אדמין"
+                                              ? "#f59e0b"
                                               : user.name === "לידור"
-                                              ? "2px solid #8b5cf6"
+                                              ? "#8b5cf6"
                                               : user.name === "נתנאל"
-                                              ? "2px solid #10b981"
+                                              ? "#10b981"
                                               : user.name === "ניצן"
-                                              ? "2px solid #ec4899"
+                                              ? "#ec4899"
                                               : user.name === "אליאור"
-                                              ? "2px solid #3b82f6"
-                                              : user.name === "ינון"
-                                              ? "2px solid #f97316"
-                                              : "none"
-                                          };">
-                                          <div style="color: ${
-                                            user.name === currentUser.name
-                                              ? "#fff"
-                                              : user.name === "אדמין"
-                                              ? "#fbbf24"
-                                              : user.name === "לידור"
-                                              ? "#c4b5fd"
-                                              : user.name === "נתנאל"
-                                              ? "#6ee7b7"
-                                              : user.name === "ניצן"
-                                              ? "#f9a8d4"
-                                              : user.name === "אליאור"
-                                              ? "#93c5fd"
-                                              : user.name === "ינון"
-                                              ? "#fdba74"
-                                              : "#38bdf8"
-                                          }; font-weight: 600; font-size: 18px;">
-                                              ${user.name} ${
-                                        user.name === currentUser.name
-                                          ? "👈"
-                                          : user.name === "אדמין"
-                                          ? "👑"
-                                          : ""
-                                      }
-                                          </div>
-                                          <div style="color: #94a3b8; font-size: 14px;">${
-                                            user.role
-                                          }</div>
-                                          ${
-                                            user.pdfUrl &&
-                                            user.pdfUrl.includes(
-                                              "drive.google.com"
-                                            ) &&
-                                            user.name === currentUser.name
-                                              ? `<div style="color: #10b981; font-size: 12px; margin-top: 5px;">✓ PDF זמין</div>`
-                                              : ""
-                                          }
-                                          ${
-                                            user.name === "אדמין" ||
-                                            user.name === "לידור" ||
-                                            user.name === "נתנאל" ||
-                                            user.name === "ניצן" ||
-                                            user.name === "אליאור" ||
-                                            user.name === "ינון"
-                                              ? `<div style="color: ${
-                                                  user.name === "אדמין"
-                                                    ? "#f59e0b"
-                                                    : user.name === "לידור"
-                                                    ? "#8b5cf6"
-                                                    : user.name === "נתנאל"
-                                                    ? "#10b981"
-                                                    : user.name === "ניצן"
-                                                    ? "#ec4899"
-                                                    : user.name === "אליאור"
-                                                    ? "#3b82f6"
-                                                    : "#f97316"
-                                                }; font-size: 12px; margin-top: 5px;">🎵 PDF+שמע</div>`
-                                              : ""
-                                          }
-                                      </div>
-                                  `
-                                    )
-                                    .join("")}
-                              </div>
+                                              ? "#3b82f6"
+                                              : "#f97316"
+                                          }; font-size: 12px; margin-top: 5px;">🎵 PDF+שמע</div>`
+                                        : ""
+                                    }
+                                </div>
+                            `
+                              )
+                              .join("")}
+                        </div>
 
-                              <div style="margin-top: 25px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1);">
-                                  <p style="color: #94a3b8; text-align: center;">
-                                      <strong>עובד על ידי:</strong> נתנאל קיומוב הגבר
-                                  </p>
-                              </div>
-                          </div>
-                      </div>
-                  `;
+                        <div style="margin-top: 25px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1);">
+                            <p style="color: #94a3b8; text-align: center;">
+                                <strong>עובד על ידי:</strong> נתנאל קיומוב הגבר
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            `;
 
         document.getElementById("mainContainer").style.display = "none";
         document.getElementById("pagesContainer").innerHTML = page;
@@ -1189,59 +1429,59 @@
         const isYinon = currentUser.name === "ינון";
 
         const page = `
-                      <div class="page-content">
-                          <button class="back-btn" onclick="closePage()">← חזרה לרשימה</button>
+                <div class="page-content">
+                    <button class="back-btn" onclick="closePage()">← חזרה לרשימה</button>
 
-                          <div class="user-info" style="margin-bottom: 20px;">
-                              ${
-                                isAdmin
-                                  ? '<span class="admin-badge">👑 מנהל</span>'
-                                  : ""
-                              }
-                              ${
-                                isLidor
-                                  ? '<span class="special-badge">🎵 אלט</span>'
-                                  : ""
-                              }
-                              ${
-                                isNatanel
-                                  ? '<span class="special-badge" style="background: linear-gradient(135deg, #10b981, #059669);">🎵 טנור</span>'
-                                  : ""
-                              }
-                              ${
-                                isNitzan
-                                  ? '<span class="special-badge" style="background: linear-gradient(135deg, #ec4899, #db2777);">🎵 בריטון ראשון</span>'
-                                  : ""
-                              }
-                              ${
-                                isElior
-                                  ? '<span class="special-badge" style="background: linear-gradient(135deg, #3b82f6, #1d4ed8);">🎵 בריטון שני</span>'
-                                  : ""
-                              }
-                              ${
-                                isYinon
-                                  ? '<span class="special-badge" style="background: linear-gradient(135deg, #f97316, #ea580c);">🥁 תופים</span>'
-                                  : ""
-                              }
-                              👤 ${currentUser.name} - ${currentUser.role}
-                          </div>
+                    <div class="user-info" style="margin-bottom: 20px;">
+                        ${
+                          isAdmin
+                            ? '<span class="admin-badge">👑 מנהל</span>'
+                            : ""
+                        }
+                        ${
+                          isLidor
+                            ? '<span class="special-badge">🎵 אלט</span>'
+                            : ""
+                        }
+                        ${
+                          isNatanel
+                            ? '<span class="special-badge" style="background: linear-gradient(135deg, #10b981, #059669);">🎵 טנור</span>'
+                            : ""
+                        }
+                        ${
+                          isNitzan
+                            ? '<span class="special-badge" style="background: linear-gradient(135deg, #ec4899, #db2777);">🎵 בריטון ראשון</span>'
+                            : ""
+                        }
+                        ${
+                          isElior
+                            ? '<span class="special-badge" style="background: linear-gradient(135deg, #3b82f6, #1d4ed8);">🎵 בריטון שני</span>'
+                            : ""
+                        }
+                        ${
+                          isYinon
+                            ? '<span class="special-badge" style="background: linear-gradient(135deg, #f97316, #ea580c);">🥁 תופים</span>'
+                            : ""
+                        }
+                        👤 ${currentUser.name} - ${currentUser.role}
+                    </div>
 
-                          <h2 style="color: #38bdf8; text-align: center; margin-bottom: 30px;">🎵 יצירה 2</h2>
+                    <h2 style="color: #38bdf8; text-align: center; margin-bottom: 30px;">🎵 יצירה 2</h2>
 
-                          <div class="content-box">
-                              <div style="font-size: 60px; margin-bottom: 20px;">📁</div>
-                              <h3 style="color: #38bdf8; margin-bottom: 15px;">יצירה מקורית</h3>
-                              <p style="color: #94a3b8; margin-bottom: 25px;">
-                                  יצירה מקורית של Lost Connection Band<br>
-                                  <span style="color: #38bdf8; font-weight: 600;">בפיתוח - זמין בקרוב!</span>
-                              </p>
+                    <div class="content-box">
+                        <div style="font-size: 60px; margin-bottom: 20px;">📁</div>
+                        <h3 style="color: #38bdf8; margin-bottom: 15px;">יצירה מקורית</h3>
+                        <p style="color: #94a3b8; margin-bottom: 25px;">
+                            יצירה מקורית של Lost Connection Band<br>
+                            <span style="color: #38bdf8; font-weight: 600;">בפיתוח - זמין בקרוב!</span>
+                        </p>
 
-                              <p style="color: #f87171; padding: 15px; background: rgba(239,68,68,0.1); border-radius: 10px;">
-                                  ⚠️ יצירה זו עדיין בפיתוח ותהיה זמינה בקרוב
-                              </p>
-                          </div>
-                      </div>
-                  `;
+                        <p style="color: #f87171; padding: 15px; background: rgba(239,68,68,0.1); border-radius: 10px;">
+                            ⚠️ יצירה זו עדיין בפיתוח ותהיה זמינה בקרוב
+                        </p>
+                    </div>
+                </div>
+            `;
 
         document.getElementById("mainContainer").style.display = "none";
         document.getElementById("pagesContainer").innerHTML = page;
@@ -1251,63 +1491,90 @@
       function openCalendar() {
         const isAdmin = currentUser.name === "אדמין";
 
-        // בדוק הרשאת התראות
-        checkNotificationPermission();
-
         const page = `
-            <div class="page-content">
-                <button class="back-btn" onclick="closePage()">← חזרה לרשימה</button>
+                <div class="page-content">
+                    <button class="back-btn" onclick="closePage()">← חזרה לרשימה</button>
 
-                <div class="user-info" style="margin-bottom: 20px;">
-                    ${isAdmin ? '<span class="admin-badge">👑 מנהל</span>' : ""}
-                    ${getUserBadge(currentUser.name)}
-                    👤 ${currentUser.name} - ${currentUser.role}
-                </div>
-
-                <h2 style="color: #38bdf8; text-align: center; margin-bottom: 30px;">📅 לוח שנה וזמנים</h2>
-
-                <div class="content-box">
-                    <div style="font-size: 60px; margin-bottom: 20px;">📅</div>
-                    <h3 style="color: #38bdf8; margin-bottom: 15px;">לוח אירועים וזמנים</h3>
-                    <p style="color: #94a3b8; margin-bottom: 25px;">
-                        כאן תוכלו לראות את כל האירועים, החזרות וההופעות של הלהקה<br>
-                        <span style="color: #38bdf8; font-weight: 600;">ניתן לקבוע תזכורות לאירועים!</span>
-                    </p>
-
-                    <div style="margin: 30px 0;">
+                    <div class="user-info" style="margin-bottom: 20px;">
                         ${
                           isAdmin
-                            ? `<button class="action-btn edit-btn" onclick="openAddEventModal()">
-                                   ✏️ הוסף אירוע חדש
-                               </button>
-                               <button class="action-btn delete-events-btn" onclick="deleteAllEvents()">
-                                   🗑️ מחק כל האירועים
-                               </button>`
+                            ? '<span class="admin-badge">👑 מנהל</span>'
                             : ""
                         }
-                        
-                        <button class="action-btn reminder-all-btn" onclick="setRemindersForAllEvents()">
-                            ⏰ תזכורת לכל האירועים
-                        </button>
+                        ${getUserBadge(currentUser.name)}
+                        👤 ${currentUser.name} - ${currentUser.role}
                     </div>
-                    
-                    ${
-                      !notificationPermission
-                        ? `
-                        <div class="permission-notice">
-                            <p>לתזכורות אמיתיות שפועלות גם כשהדפדפן סגור, יש לאשר קבלת התראות:</p>
-                            <button class="enable-notifications-btn" onclick="requestNotificationPermission()">
-                                ✅ אפשר התראות
+
+                    <h2 style="color: #38bdf8; text-align: center; margin-bottom: 30px;">📅 לוח שנה וזמנים</h2>
+
+                    <div class="content-box">
+                        <div style="font-size: 60px; margin-bottom: 20px;">📅</div>
+                        <h3 style="color: #38bdf8; margin-bottom: 15px;">לוח אירועים וזמנים</h3>
+                        <p style="color: #94a3b8; margin-bottom: 25px;">
+                            כאן תוכלו לראות את כל האירועים, החזרות וההופעות של הלהקה<br>
+                            <span style="color: #38bdf8; font-weight: 600;">ניתן לקבוע תזכורות לאירועים!</span>
+                        </p>
+
+                        <div class="reminder-settings">
+                            <h4 style="color: #38bdf8; margin-bottom: 10px;">⚙️ הגדרות תזכורת:</h4>
+                            <p style="color: #94a3b8; font-size: 14px; margin-bottom: 10px;">
+                                בחר מתי לקבל תזכורת לפני כל אירוע:
+                            </p>
+                            <div class="reminder-options">
+                                <button class="reminder-option-btn ${
+                                  reminderMinutesBefore === 15 ? "active" : ""
+                                }" onclick="setReminderTime(15)">15 דקות לפני</button>
+                                <button class="reminder-option-btn ${
+                                  reminderMinutesBefore === 30 ? "active" : ""
+                                }" onclick="setReminderTime(30)">30 דקות לפני</button>
+                                <button class="reminder-option-btn ${
+                                  reminderMinutesBefore === 60 ? "active" : ""
+                                }" onclick="setReminderTime(60)">שעה לפני</button>
+                                <button class="reminder-option-btn ${
+                                  reminderMinutesBefore === 120 ? "active" : ""
+                                }" onclick="setReminderTime(120)">שעתיים לפני</button>
+                                <button class="reminder-option-btn ${
+                                  reminderMinutesBefore === 1440 ? "active" : ""
+                                }" onclick="setReminderTime(1440)">יום לפני</button>
+                            </div>
+                        </div>
+
+                        <div style="margin: 30px 0;">
+                            ${
+                              isAdmin
+                                ? `
+                                <button class="action-btn edit-btn" onclick="openAddEventModal()">
+                                    ✏️ הוסף אירוע חדש
+                                </button>
+                                <button class="action-btn delete-events-btn" onclick="deleteAllEvents()">
+                                    🗑️ מחק כל האירועים
+                                </button>
+                            `
+                                : ""
+                            }
+                            
+                            <button class="action-btn reminder-all-btn" onclick="setRemindersForAllEvents()">
+                                ⏰ תזכורת לכל האירועים
                             </button>
                         </div>
-                    `
-                        : ""
-                    }
-                </div>
+                        
+                        ${
+                          !notificationPermission
+                            ? `
+                            <div class="permission-notice">
+                                <p>לתזכורות אמיתיות שפועלות גם כשהדפדפן סגור, יש לאשר קבלת התראות:</p>
+                                <button class="enable-notifications-btn" onclick="requestNotificationPermission()">
+                                    ✅ אפשר התראות
+                                </button>
+                            </div>
+                        `
+                            : ""
+                        }
+                    </div>
 
-                <div id="calendarContainer" class="calendar-container"></div>
-            </div>
-        `;
+                    <div id="calendarContainer" class="calendar-container"></div>
+                </div>
+            `;
 
         document.getElementById("mainContainer").style.display = "none";
         document.getElementById("pagesContainer").innerHTML = page;
@@ -1319,6 +1586,7 @@
         window.nextMonth = nextMonth;
         window.openDayEvents = openDayEvents;
         window.setReminder = setReminder;
+        window.setReminderTime = setReminderTime;
         window.saveEvent = saveEvent;
         window.cancelEvent = cancelEvent;
         window.deleteEvent = deleteEvent;
@@ -1330,30 +1598,18 @@
         renderCalendar();
       }
 
-      // פונקציה לקבלת תג למשתמש
-      function getUserBadge(userName) {
-        switch (userName) {
-          case "לידור":
-            return '<span class="special-badge">🎵 אלט</span>';
-          case "נתנאל":
-            return '<span class="special-badge" style="background: linear-gradient(135deg, #10b981, #059669);">🎵 טנור</span>';
-          case "ניצן":
-            return '<span class="special-badge" style="background: linear-gradient(135deg, #ec4899, #db2777);">🎵 בריטון ראשון</span>';
-          case "אליאור":
-            return '<span class="special-badge" style="background: linear-gradient(135deg, #3b82f6, #1d4ed8);">🎵 בריטון שני</span>';
-          case "ינון":
-            return '<span class="special-badge" style="background: linear-gradient(135deg, #f97316, #ea580c);">🥁 תופים</span>';
-          default:
-            return "";
-        }
-      }
+      // קביעת זמן תזכורת
+      function setReminderTime(minutes) {
+        reminderMinutesBefore = minutes;
+        localStorage.setItem("reminderMinutesBefore", minutes);
 
-      // בדוק הרשאת התראות
-      function checkNotificationPermission() {
-        if ("Notification" in window) {
-          notificationPermission = Notification.permission === "granted";
-        }
-        return notificationPermission;
+        // עדכן את הכפתורים הפעילים
+        document.querySelectorAll(".reminder-option-btn").forEach((btn) => {
+          btn.classList.remove("active");
+        });
+        event.target.classList.add("active");
+
+        showNotification(`✅ תזכורת תיקבע ${minutes} דקות לפני כל אירוע`);
       }
 
       // בקש הרשאת התראות
@@ -1369,6 +1625,78 @@
           });
         } else {
           showNotification("הדפדפן שלך לא תומך בהתראות");
+        }
+      }
+
+      // הגדר תזכורת לאירוע
+      function setReminder(eventId, description, day, month, year, time) {
+        const now = new Date();
+        let eventDate = new Date(year, month, day);
+
+        // פענח את השעה
+        const [hours, minutes] = time.split(":").map(Number);
+        eventDate.setHours(hours, minutes, 0, 0);
+
+        // בדוק אם השעה כבר עברה היום
+        if (eventDate <= now) {
+          // אם השעה כבר עברה היום, הוסף יום
+          eventDate.setDate(eventDate.getDate() + 1);
+        }
+
+        // שנה את הזמן לכמה דקות לפני האירוע (לפי ההגדרה)
+        let reminderTime = new Date(
+          eventDate.getTime() - reminderMinutesBefore * 60 * 1000
+        );
+
+        // אם התזכורת כבר בעבר, שנה לזמן קרוב
+        if (reminderTime <= now) {
+          reminderTime = new Date(now.getTime() + 5 * 60 * 1000); // 5 דקות מעכשיו
+        }
+
+        const reminderKey = `${eventId}_${currentUser.name}`;
+
+        // שמור את התזכורת
+        reminders[reminderKey] = {
+          eventId: eventId,
+          description: description,
+          reminderTime: reminderTime.getTime(),
+          eventTime: eventDate.getTime(),
+          userId: currentUser.name,
+          notified: false,
+          time: time,
+          date: day,
+          month: month,
+          year: year,
+          minutesBefore: reminderMinutesBefore,
+        };
+
+        localStorage.setItem("reminders", JSON.stringify(reminders));
+
+        // הצג הודעה למשתמש
+        const timeStr = formatTime(new Date(reminderTime));
+        showNotification(
+          `✅ תזכורת נקבעה ל-${timeStr} (${reminderMinutesBefore} דקות לפני האירוע בשעה ${time})`
+        );
+
+        // סגור את המודל
+        cancelEvent();
+      }
+
+      // פונקציות נוספות שצריכות להיות זמינות
+      function getUserBadge(userName) {
+        switch (userName) {
+          case "לידור":
+            return '<span class="special-badge">🎵 אלט</span>';
+          case "נתנאל":
+            return '<span class="special-badge" style="background: linear-gradient(135deg, #10b981, #059669);">🎵 טנור</span>';
+          case "ניצן":
+            return '<span class="special-badge" style="background: linear-gradient(135deg, #ec4899, #db2777);">🎵 בריטון ראשון</span>';
+          case "אליאור":
+            return '<span class="special-badge" style="background: linear-gradient(135deg, #3b82f6, #1d4ed8);">🎵 בריטון שני</span>';
+          case "ינון":
+            return '<span class="special-badge" style="background: linear-gradient(135deg, #f97316, #ea580c);">🥁 תופים</span>';
+          default:
+            return "";
         }
       }
 
@@ -1391,33 +1719,30 @@
           "נובמבר",
           "דצמבר",
         ];
-
         const dayNames = ["א", "ב", "ג", "ד", "ה", "ו", "ש"];
 
         const firstDay = new Date(currentYear, currentMonth, 1);
         const lastDay = new Date(currentYear, currentMonth + 1, 0);
         const daysInMonth = lastDay.getDate();
         const startingDay = firstDay.getDay();
-
-        // התאם את היום הראשון (ראשון = 0, אבל אנחנו רוצים ראשון = 0)
         let adjustedStartingDay = startingDay === 0 ? 6 : startingDay - 1;
 
         let calendarHTML = `
-            <div class="calendar-header">
-                <div class="calendar-title">
-                    ${monthNames[currentMonth]} ${currentYear}
+                <div class="calendar-header">
+                    <div class="calendar-title">${
+                      monthNames[currentMonth]
+                    } ${currentYear}</div>
+                    <div class="month-navigation">
+                        <button class="month-btn" onclick="prevMonth()">← חודש קודם</button>
+                        <button class="month-btn" onclick="nextMonth()">חודש הבא →</button>
+                    </div>
                 </div>
-                <div class="month-navigation">
-                    <button class="month-btn" onclick="prevMonth()">← חודש קודם</button>
-                    <button class="month-btn" onclick="nextMonth()">חודש הבא →</button>
-                </div>
-            </div>
 
-            <div class="days-grid">
-                ${dayNames
-                  .map((day) => `<div class="day-header">${day}</div>`)
-                  .join("")}
-        `;
+                <div class="days-grid">
+                    ${dayNames
+                      .map((day) => `<div class="day-header">${day}</div>`)
+                      .join("")}
+            `;
 
         let dayCounter = 1;
         const today = new Date();
@@ -1440,63 +1765,59 @@
             day === today.getDate() &&
             currentMonth === today.getMonth() &&
             currentYear === today.getFullYear();
-
           let dayClass = "day-cell";
           if (isToday) dayClass += " today";
           if (dayEvents.length > 0) dayClass += " has-events";
 
           calendarHTML += `
-            <div class="${dayClass}" onclick="openDayEvents(${day})">
-                <div class="day-number">${day}</div>
-                ${dayEvents
-                  .slice(0, 2)
-                  .map(
-                    (event) => `
-                    <div class="event-item">
-                        <span class="event-time">${event.time}</span>
-                        <span class="event-desc"> - ${event.description}</span>
-                        <span class="event-type-badge" style="background: ${getEventTypeColor(
-                          event.type
-                        )}">${event.type}</span>
+                    <div class="${dayClass}" onclick="openDayEvents(${day})">
+                        <div class="day-number">${day}</div>
+                        ${dayEvents
+                          .slice(0, 2)
+                          .map(
+                            (event) => `
+                            <div class="event-item">
+                                <span class="event-time">${event.time}</span>
+                                <span class="event-desc"> - ${
+                                  event.description
+                                }</span>
+                                <span class="event-type-badge" style="background: ${getEventTypeColor(
+                                  event.type
+                                )}">${event.type}</span>
+                            </div>
+                        `
+                          )
+                          .join("")}
+                        ${
+                          dayEvents.length > 2
+                            ? `<div class="event-item" style="background: rgba(99,102,241,0.2);">+${
+                                dayEvents.length - 2
+                              } עוד</div>`
+                            : ""
+                        }
                     </div>
-                `
-                  )
-                  .join("")}
-                ${
-                  dayEvents.length > 2
-                    ? `<div class="event-item" style="background: rgba(99,102,241,0.2);">
-                    +${dayEvents.length - 2} עוד
-                  </div>`
-                    : ""
-                }
-            </div>
-          `;
+                `;
 
           dayCounter++;
         }
 
         // השלם עם ימים ריקים בסוף החודש
-        const totalCells = 42; // 6 שורות * 7 ימים
+        const totalCells = 42;
         const remainingCells = totalCells - (adjustedStartingDay + daysInMonth);
-
         for (let i = 0; i < remainingCells; i++) {
           calendarHTML += '<div class="day-cell empty-day"></div>';
         }
 
-        calendarHTML += `
-            </div>
-            
-            ${
-              currentUser.name === "אדמין"
-                ? `
-                <div class="edit-controls">
-                    <button class="edit-btn" onclick="openAddEventModal()">✏️ הוסף אירוע חדש</button>
-                    <button class="delete-events-btn" onclick="deleteAllEvents()">🗑️ מחק כל האירועים</button>
-                </div>
-            `
-                : ""
-            }
-        `;
+        calendarHTML += `</div>`;
+
+        if (currentUser.name === "אדמין") {
+          calendarHTML += `
+                    <div class="edit-controls">
+                        <button class="edit-btn" onclick="openAddEventModal()">✏️ הוסף אירוע חדש</button>
+                        <button class="delete-events-btn" onclick="deleteAllEvents()">🗑️ מחק כל האירועים</button>
+                    </div>
+                `;
+        }
 
         container.innerHTML = calendarHTML;
       }
@@ -1559,61 +1880,60 @@
         ];
 
         let modalHTML = `
-            <div class="modal-overlay" onclick="cancelEvent()">
-                <div class="modal-content" onclick="event.stopPropagation()">
-                    <h3 class="modal-title">אירועים ליום ${day} ב${
+                <div class="modal-overlay" onclick="cancelEvent()">
+                    <div class="modal-content" onclick="event.stopPropagation()">
+                        <h3 class="modal-title">אירועים ליום ${day} ב${
           monthNames[currentMonth]
         }</h3>
-                    
-                    ${
-                      dayEvents.length === 0
-                        ? '<p style="color: #94a3b8; text-align: center; padding: 20px;">אין אירועים ביום זה</p>'
-                        : dayEvents
-                            .map(
-                              (event) => `
-                        <div style="background: ${getEventTypeColor(
-                          event.type
-                        )}; border-radius: 10px; padding: 15px; margin-bottom: 10px;">
-                            <div style="display: flex; justify-content: space-between; align-items: center;">
-                                <div>
-                                    <div style="color: #fff; font-weight: 600; font-size: 18px;">${
-                                      event.description
-                                    }</div>
-                                    <div style="color: #e2e8f0; font-size: 14px; margin-top: 5px;">
-                                        🕐 ${event.time} | 📍 ${event.type}
-                                    </div>
-                                </div>
-                                ${
-                                  currentUser.name === "אדמין"
-                                    ? `<button class="delete-btn" onclick="deleteEvent(${event.id})">מחק</button>`
-                                    : ""
-                                }
-                            </div>
-                            <button class="reminder-btn" style="width: 100%; margin-top: 10px;" 
-                                    onclick="setReminder(${event.id}, '${
-                                event.description
-                              }', ${day}, ${currentMonth}, ${currentYear}, '${
-                                event.time
-                              }')">
-                                ⏰ תזכורת לי
-                            </button>
-                        </div>
-                    `
-                            )
-                            .join("")
-                    }
-                    
-                    <div class="modal-buttons">
+                        
                         ${
-                          currentUser.name === "אדמין"
-                            ? `<button class="save-btn" onclick="openAddEventModal(${day})">הוסף אירוע</button>`
-                            : ""
+                          dayEvents.length === 0
+                            ? '<p style="color: #94a3b8; text-align: center; padding: 20px;">אין אירועים ביום זה</p>'
+                            : dayEvents
+                                .map(
+                                  (event) => `
+                                <div style="background: ${getEventTypeColor(
+                                  event.type
+                                )}; border-radius: 10px; padding: 15px; margin-bottom: 10px;">
+                                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                                        <div>
+                                            <div style="color: #fff; font-weight: 600; font-size: 18px;">${
+                                              event.description
+                                            }</div>
+                                            <div style="color: #e2e8f0; font-size: 14px; margin-top: 5px;">🕐 ${
+                                              event.time
+                                            } | 📍 ${event.type}</div>
+                                        </div>
+                                        ${
+                                          currentUser.name === "אדמין"
+                                            ? `<button class="delete-btn" onclick="deleteEvent(${event.id})">מחק</button>`
+                                            : ""
+                                        }
+                                    </div>
+                                    <button class="reminder-btn" style="width: 100%; margin-top: 10px;" onclick="setReminder(${
+                                      event.id
+                                    }, '${
+                                    event.description
+                                  }', ${day}, ${currentMonth}, ${currentYear}, '${
+                                    event.time
+                                  }')">⏰ תזכורת לי</button>
+                                </div>
+                            `
+                                )
+                                .join("")
                         }
-                        <button class="cancel-btn" onclick="cancelEvent()">סגור</button>
+                        
+                        <div class="modal-buttons">
+                            ${
+                              currentUser.name === "אדמין"
+                                ? `<button class="save-btn" onclick="openAddEventModal(${day})">הוסף אירוע</button>`
+                                : ""
+                            }
+                            <button class="cancel-btn" onclick="cancelEvent()">סגור</button>
+                        </div>
                     </div>
                 </div>
-            </div>
-        `;
+            `;
 
         document.body.insertAdjacentHTML("beforeend", modalHTML);
       }
@@ -1633,44 +1953,44 @@
           : `${currentYear}-${String(currentMonth + 1).padStart(2, "0")}-01`;
 
         let modalHTML = `
-            <div class="modal-overlay" onclick="cancelEvent()">
-                <div class="modal-content" onclick="event.stopPropagation()">
-                    <h3 class="modal-title">הוספת אירוע חדש</h3>
-                    
-                    <div class="form-group">
-                        <label class="form-label">תיאור האירוע</label>
-                        <input type="text" id="eventDescription" class="form-input" placeholder="לדוגמה: חזרה כללית">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">תאריך</label>
-                        <input type="date" id="eventDate" class="form-input" value="${defaultDate}">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">שעה</label>
-                        <input type="time" id="eventTime" class="form-input" value="19:00">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">סוג האירוע</label>
-                        <select id="eventType" class="form-select">
-                            <option value="חזרה" style="color: black; background: white;">חזרה</option>
-                            <option value="חזרת כלים" style="color: black; background: white;">חזרת כלים</option>
-                            <option value="הופעה" style="color: black; background: white;">הופעה</option>
-                            <option value="פגישה" style="color: black; background: white;">פגישה</option>
-                            <option value="אירוע מיוחד" style="color: black; background: white;">אירוע מיוחד</option>
-                            <option value="אחר" style="color: black; background: white;">אחר</option>
-                        </select>
-                    </div>
-                    
-                    <div class="modal-buttons">
-                        <button class="save-btn" onclick="saveEvent()">שמור אירוע</button>
-                        <button class="cancel-btn" onclick="cancelEvent()">ביטול</button>
+                <div class="modal-overlay" onclick="cancelEvent()">
+                    <div class="modal-content" onclick="event.stopPropagation()">
+                        <h3 class="modal-title">הוספת אירוע חדש</h3>
+                        
+                        <div class="form-group">
+                            <label class="form-label">תיאור האירוע</label>
+                            <input type="text" id="eventDescription" class="form-input" placeholder="לדוגמה: חזרה כללית">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">תאריך</label>
+                            <input type="date" id="eventDate" class="form-input" value="${defaultDate}">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">שעה</label>
+                            <input type="time" id="eventTime" class="form-input" value="19:00">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">סוג האירוע</label>
+                            <select id="eventType" class="form-select">
+                                <option value="חזרה" style="color: black; background: white;">חזרה</option>
+                                <option value="חזרת כלים" style="color: black; background: white;">חזרת כלים</option>
+                                <option value="הופעה" style="color: black; background: white;">הופעה</option>
+                                <option value="פגישה" style="color: black; background: white;">פגישה</option>
+                                <option value="אירוע מיוחד" style="color: black; background: white;">אירוע מיוחד</option>
+                                <option value="אחר" style="color: black; background: white;">אחר</option>
+                            </select>
+                        </div>
+                        
+                        <div class="modal-buttons">
+                            <button class="save-btn" onclick="saveEvent()">שמור אירוע</button>
+                            <button class="cancel-btn" onclick="cancelEvent()">ביטול</button>
+                        </div>
                     </div>
                 </div>
-            </div>
-        `;
+            `;
 
         document.body.insertAdjacentHTML("beforeend", modalHTML);
       }
@@ -1716,7 +2036,6 @@
         calendarEvents = calendarEvents.filter((event) => event.id !== eventId);
         localStorage.setItem("calendarEvents", JSON.stringify(calendarEvents));
 
-        // סגור את כל המודלים
         const modals = document.querySelectorAll(".modal-overlay");
         modals.forEach((modal) => modal.remove());
 
@@ -1752,70 +2071,15 @@
         modals.forEach((modal) => modal.remove());
       }
 
-      // הגדר תזכורת לאירוע
-      function setReminder(eventId, description, day, month, year, time) {
-        const now = new Date();
-        const eventDate = new Date(year, month, day);
-
-        // פענח את השעה
-        const [hours, minutes] = time.split(":").map(Number);
-        eventDate.setHours(hours, minutes, 0, 0);
-
-        // שנה את הזמן לשעה אחת לפני האירוע
-        const reminderTime = new Date(eventDate.getTime() - 60 * 60 * 1000);
-
-        // בדוק אם התזכורת כבר בעבר
-        if (reminderTime < now) {
-          showNotification("לא ניתן לקבוע תזכורת לאירוע שכבר עבר");
-          return;
-        }
-
-        // בדוק אם כבר יש תזכורת לאירוע הזה
-        const reminderKey = `${eventId}_${currentUser.name}`;
-        if (reminders[reminderKey]) {
-          showNotification("כבר יש לך תזכורת לאירוע זה");
-          return;
-        }
-
-        // שמור את התזכורת
-        reminders[reminderKey] = {
-          eventId: eventId,
-          description: description,
-          reminderTime: reminderTime.getTime(),
-          eventTime: eventDate.getTime(),
-          userId: currentUser.name,
-          notified: false,
-        };
-
-        localStorage.setItem("reminders", JSON.stringify(reminders));
-
-        // תזמן את התזכורת
-        const timeUntilReminder = reminderTime.getTime() - now.getTime();
-
-        if (timeUntilReminder > 0) {
-          setTimeout(() => {
-            triggerReminder(reminders[reminderKey]);
-          }, timeUntilReminder);
-        }
-
-        showNotification(`✅ תזכורת נקבעה ל-${formatTime(reminderTime)}`);
-
-        // סגור את המודל
-        cancelEvent();
-      }
-
       // קבע תזכורות לכל האירועים העתידיים
       function setRemindersForAllEvents() {
         const now = new Date();
         let remindersSet = 0;
 
-        // קח רק אירועים עתידיים לחודש הקרוב
         const upcomingEvents = calendarEvents.filter((event) => {
           const eventDate = new Date(event.year, event.month, event.date);
           const [hours, minutes] = event.time.split(":").map(Number);
           eventDate.setHours(hours, minutes, 0, 0);
-
-          // בדוק אם האירוע בעתיד ובתוך החודש הקרוב
           return (
             eventDate > now &&
             eventDate < new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000)
@@ -1830,13 +2094,14 @@
         upcomingEvents.forEach((event) => {
           const reminderKey = `${event.id}_${currentUser.name}`;
 
-          // בדוק אם כבר יש תזכורת
           if (!reminders[reminderKey]) {
             const eventDate = new Date(event.year, event.month, event.date);
             const [hours, minutes] = event.time.split(":").map(Number);
             eventDate.setHours(hours, minutes, 0, 0);
 
-            const reminderTime = new Date(eventDate.getTime() - 60 * 60 * 1000);
+            const reminderTime = new Date(
+              eventDate.getTime() - reminderMinutesBefore * 60 * 1000
+            );
 
             if (reminderTime > now) {
               reminders[reminderKey] = {
@@ -1846,47 +2111,20 @@
                 eventTime: eventDate.getTime(),
                 userId: currentUser.name,
                 notified: false,
+                time: event.time,
+                date: event.date,
+                month: event.month,
+                year: event.year,
+                minutesBefore: reminderMinutesBefore,
               };
 
               remindersSet++;
-
-              // תזמן את התזכורת
-              const timeUntilReminder = reminderTime.getTime() - now.getTime();
-              if (timeUntilReminder > 0) {
-                setTimeout(() => {
-                  triggerReminder(reminders[reminderKey]);
-                }, timeUntilReminder);
-              }
             }
           }
         });
 
         localStorage.setItem("reminders", JSON.stringify(reminders));
         showNotification(`✅ נקבעו ${remindersSet} תזכורות לאירועים עתידיים`);
-      }
-
-      // הפעל תזכורת
-      function triggerReminder(reminder) {
-        if (reminder.notified) return;
-
-        // סמן ששלחנו תזכורת
-        reminder.notified = true;
-        localStorage.setItem("reminders", JSON.stringify(reminders));
-
-        // שלח התראה
-        if ("Notification" in window && Notification.permission === "granted") {
-          new Notification("⏰ תזכורת מ-Lost Connection Band", {
-            body: `${reminder.description} בעוד שעה!`,
-            icon: "https://i.ibb.co/KxZZxtgN/Lost-Connection-Band-Israel.jpg",
-            tag: "band-reminder",
-          });
-        } else {
-          // אם אין הרשאות, הראה התראה בדפדפן
-          showNotification(
-            `⏰ תזכורת: ${reminder.description} בעוד שעה!`,
-            true
-          );
-        }
       }
 
       // פונקציית עזר לפורמט זמן
@@ -1908,13 +2146,6 @@
 
         if (isReminder) {
           notification.style.background = "#8b5cf6";
-          // הוסף סאונד אם אפשר
-          try {
-            const audio = new Audio(
-              "data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAZGF0YQQ="
-            );
-            audio.play().catch(() => {});
-          } catch (e) {}
         }
 
         document.body.appendChild(notification);
@@ -1924,56 +2155,46 @@
         }, 5000);
       }
 
-      // בדוק תזכורות כל דקה (לגיבוי)
-      setInterval(() => {
-        const now = new Date().getTime();
-        for (const key in reminders) {
-          const reminder = reminders[key];
-          if (!reminder.notified && reminder.reminderTime <= now) {
-            triggerReminder(reminder);
-          }
-        }
-      }, 60000);
-
-      // בדוק תזכורות בהתחלה
-      setTimeout(() => {
-        const now = new Date().getTime();
-        for (const key in reminders) {
-          const reminder = reminders[key];
-          if (!reminder.notified && reminder.reminderTime <= now) {
-            triggerReminder(reminder);
-          }
-        }
-      }, 1000);
-
-      // קיצורי מקלדת
+      // טען הגדרות
       document.addEventListener("DOMContentLoaded", function () {
+        // טען זמן תזכורת שנשמר
+        const savedMinutes = localStorage.getItem("reminderMinutesBefore");
+        if (savedMinutes) {
+          reminderMinutesBefore = parseInt(savedMinutes);
+        }
+
+        // בדוק תזכורות שהגיע זמנן
+        setTimeout(checkReminders, 2000);
+
+        // בדוק תזכורות כל 30 שניות
+        setInterval(checkReminders, 30000);
+
+        // קיצורי מקלדת
         const usernameInput = document.getElementById("username");
         const passwordInput = document.getElementById("password");
 
-        usernameInput.focus();
-
-        usernameInput.addEventListener("keypress", function (event) {
-          if (event.key === "Enter") {
-            event.preventDefault();
-            passwordInput.focus();
-          }
-        });
-
-        passwordInput.addEventListener("keypress", function (event) {
-          if (event.key === "Enter") {
-            event.preventDefault();
-            login();
-          }
-        });
-
-        // בקש הרשאת התראות אוטומטית
-        if ("Notification" in window && Notification.permission === "default") {
-          setTimeout(() => {
-            if (currentUser) {
-              Notification.requestPermission();
+        if (usernameInput) {
+          usernameInput.focus();
+          usernameInput.addEventListener("keypress", function (event) {
+            if (event.key === "Enter") {
+              event.preventDefault();
+              if (passwordInput) passwordInput.focus();
             }
-          }, 3000);
+          });
+        }
+
+        if (passwordInput) {
+          passwordInput.addEventListener("keypress", function (event) {
+            if (event.key === "Enter") {
+              event.preventDefault();
+              login();
+            }
+          });
+        }
+
+        // בדוק הרשאת התראות
+        if ("Notification" in window) {
+          notificationPermission = Notification.permission === "granted";
         }
       });
     </script>
