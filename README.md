@@ -364,7 +364,7 @@
         },
         {
           name: "administor",
-          password: "Lost band adm",
+          password: "אדמיןסיסמה",
           pdfUrl:
             "https://drive.google.com/file/d/1tC3jSIXqqYkYxSVHCF2bczLGnu3niHeS/view?usp=sharing",
           videoUrl: "https://youtu.be/VsExU_j28eM",
