@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>התחברות - יצירות דיגיטליות</title>
     <style>
+      /* כל הסגנונות מהקוד הקודם נשארים */
       * {
         margin: 0;
         padding: 0;
@@ -666,6 +667,112 @@
         background: #38bdf8;
         color: white;
       }
+
+      /* סגנונות חדשים להוספה ליומן */
+      .device-notice {
+        background: rgba(56, 189, 248, 0.1);
+        border-radius: 10px;
+        padding: 20px;
+        margin: 20px 0;
+        border: 1px solid #38bdf8;
+      }
+
+      .device-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 15px;
+        justify-content: center;
+      }
+
+      .ios-btn {
+        background: linear-gradient(135deg, #000000, #333333);
+        color: white;
+        padding: 12px 20px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .android-btn {
+        background: linear-gradient(135deg, #3ddc84, #0f9d58);
+        color: white;
+        padding: 12px 20px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .calendar-icon {
+        font-size: 20px;
+      }
+
+      .instructions-modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.9);
+        z-index: 10000;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+      }
+
+      .instructions-content {
+        background: #1e293b;
+        border-radius: 15px;
+        padding: 30px;
+        max-width: 500px;
+        width: 90%;
+        border: 2px solid #38bdf8;
+        max-height: 80vh;
+        overflow-y: auto;
+      }
+
+      .instructions-title {
+        color: #38bdf8;
+        font-size: 24px;
+        margin-bottom: 20px;
+        text-align: center;
+      }
+
+      .instructions-steps {
+        color: #94a3b8;
+        line-height: 1.6;
+        margin-bottom: 25px;
+      }
+
+      .instructions-steps ol {
+        padding-right: 20px;
+        margin-right: 10px;
+      }
+
+      .instructions-steps li {
+        margin-bottom: 15px;
+      }
+
+      .instructions-close {
+        padding: 12px 25px;
+        background: #38bdf8;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+        width: 100%;
+        margin-top: 10px;
+      }
     </style>
   </head>
   <body>
@@ -851,45 +958,15 @@
       let currentMonth = new Date().getMonth();
       let currentYear = new Date().getFullYear();
       let notificationPermission = false;
-      let reminderMinutesBefore = 60; // תזכורת שעה לפני ברירת מחדל
+      let reminderMinutesBefore = 60;
 
-      // צליל תזכורת עדין
-      function createGentleReminderSound() {
-        try {
-          const audioContext = new (window.AudioContext ||
-            window.webkitAudioContext)();
+      // בדוק אם זה אייפון או אנדרואיד
+      function isIOS() {
+        return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+      }
 
-          // צור צליל נעים
-          const oscillator = audioContext.createOscillator();
-          const gainNode = audioContext.createGain();
-
-          oscillator.connect(gainNode);
-          gainNode.connect(audioContext.destination);
-
-          // צליל נעים של פעמון
-          oscillator.frequency.setValueAtTime(523.25, audioContext.currentTime); // דו גבוה
-          oscillator.frequency.exponentialRampToValueAtTime(
-            392.0,
-            audioContext.currentTime + 0.5
-          ); // סול
-
-          oscillator.type = "sine";
-
-          // עוצמה נעימה
-          gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-          gainNode.gain.exponentialRampToValueAtTime(
-            0.01,
-            audioContext.currentTime + 1
-          );
-
-          oscillator.start(audioContext.currentTime);
-          oscillator.stop(audioContext.currentTime + 1); // שנייה אחת
-
-          return audioContext;
-        } catch (error) {
-          console.error("לא ניתן ליצור צליל תזכורת:", error);
-          return null;
-        }
+      function isAndroid() {
+        return /Android/.test(navigator.userAgent);
       }
 
       // התראה על מסך מלא - עם תמונה של הלהקה
@@ -915,9 +992,16 @@
                             מתחיל בשעה ${reminder.time}
                         </span>
                     </p>
-                    <button class="emergency-close" onclick="this.closest('.emergency-notification').remove()" style="margin-top: 20px;">
-                        סגור
-                    </button>
+                    
+                    <div style="margin-top: 20px;">
+                        <button class="emergency-close" onclick="this.closest('.emergency-notification').remove()" style="margin-bottom: 10px;">
+                            סגור
+                        </button>
+                        <button class="ios-btn" onclick="showCalendarInstructions('${reminder.description}', ${reminder.date}, ${reminder.month}, ${reminder.year}, '${reminder.time}')" style="width: 100%;">
+                            <span class="calendar-icon">📅</span>
+                            הוסף ליומן הטלפון
+                        </button>
+                    </div>
                 </div>
             `;
 
@@ -959,6 +1043,45 @@
         }, 60000);
       }
 
+      // צליל תזכורת עדין
+      function createGentleReminderSound() {
+        try {
+          const audioContext = new (window.AudioContext ||
+            window.webkitAudioContext)();
+
+          // צור צליל נעים
+          const oscillator = audioContext.createOscillator();
+          const gainNode = audioContext.createGain();
+
+          oscillator.connect(gainNode);
+          gainNode.connect(audioContext.destination);
+
+          // צליל נעים של פעמון
+          oscillator.frequency.setValueAtTime(523.25, audioContext.currentTime);
+          oscillator.frequency.exponentialRampToValueAtTime(
+            392.0,
+            audioContext.currentTime + 0.5
+          );
+
+          oscillator.type = "sine";
+
+          // עוצמה נעימה
+          gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+          gainNode.gain.exponentialRampToValueAtTime(
+            0.01,
+            audioContext.currentTime + 1
+          );
+
+          oscillator.start(audioContext.currentTime);
+          oscillator.stop(audioContext.currentTime + 1);
+
+          return audioContext;
+        } catch (error) {
+          console.error("לא ניתן ליצור צליל תזכורת:", error);
+          return null;
+        }
+      }
+
       // בדוק תזכורות שהגיע זמנן
       function checkReminders() {
         const now = new Date().getTime();
@@ -974,6 +1097,263 @@
 
       // בדוק תזכורות כל 30 שניות
       setInterval(checkReminders, 30000);
+
+      // פונקציה ליצירת קישור להוספה ליומן
+      function createCalendarLink(description, day, month, year, time) {
+        // הפוך את התאריך לפורמט YYYYMMDD
+        const formattedDate = `${year}${String(month + 1).padStart(
+          2,
+          "0"
+        )}${String(day).padStart(2, "0")}`;
+
+        // פורמט זמן: HHMMSS
+        const [hours, minutes] = time.split(":");
+        const formattedTime = `${hours}${minutes}00`;
+
+        if (isIOS()) {
+          // קישור לאייפון - יוצר אירוע ביומן
+          return `data:text/calendar;charset=utf-8,BEGIN:VCALENDAR%0AVERSION:2.0%0ABEGIN:VEVENT%0ASUMMARY:${encodeURIComponent(
+            description
+          )}%0ADTSTART:${formattedDate}T${formattedTime}%0ADTEND:${formattedDate}T${
+            parseInt(hours) + 1
+          }${minutes}00%0ALOCATION:חזרת%20Lost%20Connection%20Band%0ADESCRIPTION:${encodeURIComponent(
+            description
+          )}%20-%20Lost%20Connection%20Band%0AEND:VEVENT%0AEND:VCALENDAR`;
+        } else if (isAndroid()) {
+          // קישור לאנדרואיד - פותח את יומן Google
+          const endDate = new Date(
+            year,
+            month,
+            day,
+            parseInt(hours) + 1,
+            parseInt(minutes)
+          );
+          const endFormatted =
+            endDate.toISOString().replace(/[-:]/g, "").split(".")[0] + "Z";
+
+          const startDate = new Date(year, month, day, hours, minutes);
+          const startFormatted =
+            startDate.toISOString().replace(/[-:]/g, "").split(".")[0] + "Z";
+
+          return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(
+            description
+          )}&dates=${formattedDate}T${formattedTime}/${formattedDate}T${
+            parseInt(hours) + 1
+          }${minutes}00&details=${encodeURIComponent(
+            "חזרת Lost Connection Band"
+          )}&location=חזרת%20Lost%20Connection%20Band`;
+        } else {
+          // לדפדפן רגיל
+          return `data:text/calendar;charset=utf-8,BEGIN:VCALENDAR%0AVERSION:2.0%0ABEGIN:VEVENT%0ASUMMARY:${encodeURIComponent(
+            description
+          )}%0ADTSTART:${formattedDate}T${formattedTime}%0ADTEND:${formattedDate}T${
+            parseInt(hours) + 1
+          }${minutes}00%0ALOCATION:חזרת%20Lost%20Connection%20Band%0ADESCRIPTION:${encodeURIComponent(
+            description
+          )}%20-%20Lost%20Connection%20Band%0AEND:VEVENT%0AEND:VCALENDAR`;
+        }
+      }
+
+      // הצג הוראות להוספה ליומן
+      function showCalendarInstructions(description, day, month, year, time) {
+        const isIOSDevice = isIOS();
+        const isAndroidDevice = isAndroid();
+
+        let instructionsHTML = "";
+
+        if (isIOSDevice) {
+          instructionsHTML = `
+                    <div class="instructions-modal">
+                        <div class="instructions-content">
+                            <h3 class="instructions-title">📱 הוספה ליומן באייפון</h3>
+                            <div class="instructions-steps">
+                                <ol>
+                                    <li>לחץ על הכפתור "הורד קובץ יומן"</li>
+                                    <li>בחר "הוסף ליומן" מהתפריט שנפתח</li>
+                                    <li>בדוק את פרטי האירוע ולחץ "שמור"</li>
+                                    <li>האירוע יתווסף ליומן הטלפון שלך</li>
+                                </ol>
+                                <p style="color: #38bdf8; text-align: center; margin-top: 20px;">
+                                    האירוע יתווסף ליום ${day}/${
+            month + 1
+          }/${year} בשעה ${time}
+                                </p>
+                            </div>
+                            <a href="${createCalendarLink(
+                              description,
+                              day,
+                              month,
+                              year,
+                              time
+                            )}" download="lost-connection-event.ics" class="ios-btn" style="width: 100%; justify-content: center; text-decoration: none;">
+                                <span class="calendar-icon">📥</span>
+                                הורד קובץ יומן
+                            </a>
+                            <button class="instructions-close" onclick="this.closest('.instructions-modal').remove()">
+                                סגור
+                            </button>
+                        </div>
+                    </div>
+                `;
+        } else if (isAndroidDevice) {
+          instructionsHTML = `
+                    <div class="instructions-modal">
+                        <div class="instructions-content">
+                            <h3 class="instructions-title">📱 הוספה ליומן באנדרואיד</h3>
+                            <div class="instructions-steps">
+                                <ol>
+                                    <li>לחץ על הכפתור "פתח ביומן Google"</li>
+                                    <li>המערכת תפתח את יומן Google</li>
+                                    <li>בדוק את פרטי האירוע ולחץ "שמור"</li>
+                                    <li>האירוע יתווסף ליומן שלך באופן אוטומטי</li>
+                                </ol>
+                                <p style="color: #38bdf8; text-align: center; margin-top: 20px;">
+                                    האירוע יתווסף ליום ${day}/${
+            month + 1
+          }/${year} בשעה ${time}
+                                </p>
+                            </div>
+                            <a href="${createCalendarLink(
+                              description,
+                              day,
+                              month,
+                              year,
+                              time
+                            )}" target="_blank" class="android-btn" style="width: 100%; justify-content: center; text-decoration: none;">
+                                <span class="calendar-icon">📅</span>
+                                פתח ביומן Google
+                            </a>
+                            <button class="instructions-close" onclick="this.closest('.instructions-modal').remove()">
+                                סגור
+                            </button>
+                        </div>
+                    </div>
+                `;
+        } else {
+          instructionsHTML = `
+                    <div class="instructions-modal">
+                        <div class="instructions-content">
+                            <h3 class="instructions-title">💻 הוספה ליומן</h3>
+                            <div class="instructions-steps">
+                                <ol>
+                                    <li>לחץ על הכפתור "הורד קובץ יומן"</li>
+                                    <li>שמור את הקובץ במחשב שלך</li>
+                                    <li>פתח את יומן הטלפון או המחשב שלך</li>
+                                    <li>יבא את קובץ ה-.ics ליומן</li>
+                                </ol>
+                                <p style="color: #38bdf8; text-align: center; margin-top: 20px;">
+                                    האירוע יתווסף ליום ${day}/${
+            month + 1
+          }/${year} בשעה ${time}
+                                </p>
+                            </div>
+                            <a href="${createCalendarLink(
+                              description,
+                              day,
+                              month,
+                              year,
+                              time
+                            )}" download="lost-connection-event.ics" class="ios-btn" style="width: 100%; justify-content: center; text-decoration: none;">
+                                <span class="calendar-icon">📥</span>
+                                הורד קובץ יומן
+                            </a>
+                            <button class="instructions-close" onclick="this.closest('.instructions-modal').remove()">
+                                סגור
+                            </button>
+                        </div>
+                    </div>
+                `;
+        }
+
+        // סגור את ההתראה הקודמת
+        const existingAlert = document.querySelector(".emergency-notification");
+        if (existingAlert) {
+          existingAlert.remove();
+        }
+
+        document.body.insertAdjacentHTML("beforeend", instructionsHTML);
+      }
+
+      // פונקציה להצגת כפתורים להוספה ליומן
+      function showCalendarButtons() {
+        return `
+                <div class="device-notice">
+                    <p style="color: #38bdf8; text-align: center; margin-bottom: 15px; font-weight: 600;">
+                        📱 לקבלת תזכורות אמינות גם כשהדפדפן סגור:
+                    </p>
+                    <p style="color: #94a3b8; font-size: 14px; text-align: center; margin-bottom: 15px;">
+                        הוסף את האירועים ליומן הטלפון שלך
+                    </p>
+                    <div class="device-buttons">
+                        <button class="ios-btn" onclick="showDeviceInstructions('ios')">
+                            <span class="calendar-icon"></span>
+                            לאייפון
+                        </button>
+                        <button class="android-btn" onclick="showDeviceInstructions('android')">
+                            <span class="calendar-icon">🤖</span>
+                            לאנדרואיד
+                        </button>
+                    </div>
+                </div>
+            `;
+      }
+
+      // הצג הוראות למכשיר ספציפי
+      function showDeviceInstructions(deviceType) {
+        let title = "";
+        let steps = "";
+        let buttonText = "";
+
+        if (deviceType === "ios") {
+          title = " הוספת אירועים ליומן באייפון";
+          steps = `
+                    <ol>
+                        <li>לחץ על כל אירוע בלוח השנה</li>
+                        <li>לחץ על כפתור "תזכורת לי"</li>
+                        <li>בחר "הוסף ליומן הטלפון"</li>
+                        <li>לחץ על "הורד קובץ יומן"</li>
+                        <li>בחר "הוסף ליומן" מהתפריט</li>
+                        <li>שמור את האירוע</li>
+                    </ol>
+                    <p style="color: #38bdf8; margin-top: 15px;">
+                        האירוע יתווסף ליומן המובנה של האייפון שלך!
+                    </p>
+                `;
+          buttonText = "הבנתי";
+        } else {
+          title = "🤖 הוספת אירועים ליומן באנדרואיד";
+          steps = `
+                    <ol>
+                        <li>לחץ על כל אירוע בלוח השנה</li>
+                        <li>לחץ על כפתור "תזכורת לי"</li>
+                        <li>בחר "הוסף ליומן הטלפון"</li>
+                        <li>לחץ על "פתח ביומן Google"</li>
+                        <li>האירוע ייפתח ביומן Google</li>
+                        <li>לחץ "שמור"</li>
+                    </ol>
+                    <p style="color: #38bdf8; margin-top: 15px;">
+                        האירוע יתווסף ליומן Google שלך ויסינכרן עם כל המכשירים!
+                    </p>
+                `;
+          buttonText = "הבנתי";
+        }
+
+        const instructionsHTML = `
+                <div class="instructions-modal">
+                    <div class="instructions-content">
+                        <h3 class="instructions-title">${title}</h3>
+                        <div class="instructions-steps">
+                            ${steps}
+                        </div>
+                        <button class="instructions-close" onclick="this.closest('.instructions-modal').remove()">
+                            ${buttonText}
+                        </button>
+                    </div>
+                </div>
+            `;
+
+        document.body.insertAdjacentHTML("beforeend", instructionsHTML);
+      }
 
       // התחברות
       function login() {
@@ -1515,8 +1895,10 @@
                             <span style="color: #38bdf8; font-weight: 600;">ניתן לקבוע תזכורות לאירועים!</span>
                         </p>
 
+                        ${showCalendarButtons()}
+
                         <div class="reminder-settings">
-                            <h4 style="color: #38bdf8; margin-bottom: 10px;">⚙️ הגדרות תזכורת:</h4>
+                            <h4 style="color: #38bdf8; margin-bottom: 10px;">⚙️ הגדרות תזכורת באתר:</h4>
                             <p style="color: #94a3b8; font-size: 14px; margin-bottom: 10px;">
                                 בחר מתי לקבל תזכורת לפני כל אירוע:
                             </p>
@@ -1554,7 +1936,7 @@
                             }
                             
                             <button class="action-btn reminder-all-btn" onclick="setRemindersForAllEvents()">
-                                ⏰ תזכורת לכל האירועים
+                                ⏰ תזכורת לכל האירועים (באתר)
                             </button>
                         </div>
                         
@@ -1593,6 +1975,9 @@
         window.deleteAllEvents = deleteAllEvents;
         window.setRemindersForAllEvents = setRemindersForAllEvents;
         window.requestNotificationPermission = requestNotificationPermission;
+        window.showCalendarInstructions = showCalendarInstructions;
+        window.showDeviceInstructions = showDeviceInstructions;
+        window.createCalendarLink = createCalendarLink;
 
         // הצג את לוח השנה
         renderCalendar();
@@ -1650,7 +2035,7 @@
 
         // אם התזכורת כבר בעבר, שנה לזמן קרוב
         if (reminderTime <= now) {
-          reminderTime = new Date(now.getTime() + 5 * 60 * 1000); // 5 דקות מעכשיו
+          reminderTime = new Date(now.getTime() + 5 * 60 * 1000);
         }
 
         const reminderKey = `${eventId}_${currentUser.name}`;
@@ -1672,11 +2057,8 @@
 
         localStorage.setItem("reminders", JSON.stringify(reminders));
 
-        // הצג הודעה למשתמש
-        const timeStr = formatTime(new Date(reminderTime));
-        showNotification(
-          `✅ תזכורת נקבעה ל-${timeStr} (${reminderMinutesBefore} דקות לפני האירוע בשעה ${time})`
-        );
+        // הצג הודעה עם אפשרות להוספה ליומן הטלפון
+        showCalendarInstructions(description, day, month, year, time);
 
         // סגור את המודל
         cancelEvent();
