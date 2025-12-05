@@ -363,7 +363,7 @@
           welcome: "ברוך הבא ינון! כאן ה-PDF האישי שלך",
         },
         {
-          name: "administor",
+          name: "אדמין",
           password: "אורי סיסמה בדוי",
           pdfUrl:
             "https://drive.google.com/file/d/1tC3jSIXqqYkYxSVHCF2bczLGnu3niHeS/view?usp=sharing",
