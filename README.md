@@ -180,6 +180,21 @@
         color: white;
       }
 
+      .calendar-btn {
+        background: linear-gradient(135deg, #10b981, #059669);
+        color: white;
+      }
+
+      .reminder-all-btn {
+        background: linear-gradient(135deg, #f59e0b, #d97706);
+        color: white;
+      }
+
+      .delete-events-btn {
+        background: linear-gradient(135deg, #ef4444, #dc2626);
+        color: white;
+      }
+
       .logout-section {
         text-align: center;
         margin-top: 60px;
@@ -236,6 +251,306 @@
         width: 100%;
         height: 450px;
         border: none;
+      }
+
+      /* סגנונות לוח שנה */
+      .calendar-container {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+
+      .calendar-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+        padding: 20px;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 15px;
+      }
+
+      .calendar-title {
+        color: #38bdf8;
+        font-size: 28px;
+        font-weight: 700;
+      }
+
+      .month-navigation {
+        display: flex;
+        gap: 10px;
+      }
+
+      .month-btn {
+        padding: 8px 20px;
+        background: rgba(56, 189, 248, 0.2);
+        color: #38bdf8;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+      }
+
+      .days-grid {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 10px;
+        margin-bottom: 20px;
+      }
+
+      .day-header {
+        text-align: center;
+        padding: 15px;
+        background: rgba(56, 189, 248, 0.1);
+        border-radius: 10px;
+        color: #38bdf8;
+        font-weight: 600;
+      }
+
+      .day-cell {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 10px;
+        padding: 15px;
+        min-height: 120px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .day-cell:hover {
+        background: rgba(56, 189, 248, 0.08);
+        transform: translateY(-2px);
+      }
+
+      .day-number {
+        font-size: 18px;
+        font-weight: 700;
+        color: #fff;
+        margin-bottom: 8px;
+      }
+
+      .event-item {
+        background: rgba(56, 189, 248, 0.15);
+        border-radius: 6px;
+        padding: 6px 10px;
+        margin-bottom: 6px;
+        font-size: 12px;
+        color: #e2e8f0;
+      }
+
+      .event-time {
+        color: #38bdf8;
+        font-weight: 600;
+      }
+
+      .event-desc {
+        color: #cbd5e1;
+      }
+
+      .empty-day {
+        background: rgba(255, 255, 255, 0.02);
+        cursor: default;
+      }
+
+      .empty-day:hover {
+        background: rgba(255, 255, 255, 0.02);
+        transform: none;
+      }
+
+      .today {
+        background: rgba(56, 189, 248, 0.2);
+        border: 2px solid #38bdf8;
+      }
+
+      .has-events {
+        border-left: 4px solid #10b981;
+      }
+
+      /* סגנונות עריכה */
+      .edit-controls {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+        padding: 20px;
+        background: rgba(245, 158, 11, 0.1);
+        border-radius: 10px;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+
+      .edit-btn {
+        padding: 10px 20px;
+        background: #f59e0b;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+      }
+
+      .reminder-btn {
+        padding: 10px 20px;
+        background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+        margin-top: 10px;
+      }
+
+      .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.8);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+        padding: 20px;
+      }
+
+      .modal-content {
+        background: #1e293b;
+        border-radius: 15px;
+        padding: 30px;
+        width: 100%;
+        max-width: 500px;
+        border: 2px solid #38bdf8;
+        max-height: 90vh;
+        overflow-y: auto;
+      }
+
+      .modal-title {
+        color: #38bdf8;
+        font-size: 24px;
+        margin-bottom: 20px;
+        text-align: center;
+      }
+
+      .form-group {
+        margin-bottom: 20px;
+      }
+
+      .form-label {
+        display: block;
+        color: #94a3b8;
+        margin-bottom: 8px;
+        font-size: 14px;
+      }
+
+      .form-input,
+      .form-select {
+        width: 100%;
+        padding: 12px;
+        border-radius: 8px;
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        background: rgba(255, 255, 255, 0.08);
+        color: #fff;
+        font-size: 16px;
+      }
+
+      .form-select option {
+        background: #1e293b;
+        color: #fff;
+      }
+
+      .modal-buttons {
+        display: flex;
+        gap: 10px;
+        margin-top: 30px;
+      }
+
+      .save-btn {
+        flex: 1;
+        padding: 12px;
+        background: #10b981;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+      }
+
+      .cancel-btn {
+        flex: 1;
+        padding: 12px;
+        background: #64748b;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+      }
+
+      .delete-btn {
+        background: #ef4444;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        padding: 4px 8px;
+        font-size: 12px;
+        cursor: pointer;
+        margin-left: 5px;
+      }
+
+      .notification {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: #10b981;
+        color: white;
+        padding: 15px 25px;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        z-index: 1001;
+        animation: slideIn 0.3s ease;
+      }
+
+      .event-type-badge {
+        display: inline-block;
+        padding: 2px 8px;
+        border-radius: 4px;
+        font-size: 11px;
+        margin-left: 5px;
+        font-weight: 600;
+      }
+
+      @keyframes slideIn {
+        from {
+          transform: translateX(100%);
+          opacity: 0;
+        }
+        to {
+          transform: translateX(0);
+          opacity: 1;
+        }
+      }
+
+      .permission-notice {
+        background: rgba(245, 158, 11, 0.1);
+        border: 1px solid #f59e0b;
+        border-radius: 10px;
+        padding: 15px;
+        margin: 20px 0;
+        text-align: center;
+      }
+
+      .permission-notice p {
+        color: #fbbf24;
+        margin-bottom: 10px;
+      }
+
+      .enable-notifications-btn {
+        background: #f59e0b;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 10px 20px;
+        cursor: pointer;
+        font-weight: 600;
       }
     </style>
   </head>
@@ -301,6 +616,13 @@
             פרויקט שני
           </div>
         </div>
+
+        <div class="creation-card" onclick="openCalendar()">
+          <div class="creation-name">📅 לוח שנה וזמנים</div>
+          <div style="color: #94a3b8; font-size: 16px; margin-top: 8px">
+            צפייה בתאריכים, זמנים וקביעת תזכורות
+          </div>
+        </div>
       </div>
 
       <div class="logout-section">
@@ -310,6 +632,7 @@
 
     <!-- דפים דינמיים -->
     <div id="pagesContainer"></div>
+
     <script>
       // משתמשים עם PDFים אישיים
       const users = [
@@ -357,14 +680,14 @@
           name: "ינון",
           password: "ינוןסיסמה",
           pdfUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-          videoUrl: "https://youtu.be/VsExU_j28eM", // ינון מקבל את הסרטון של האדמין
+          videoUrl: "https://youtu.be/VsExU_j28eM",
           role: "תופים",
           instrument: "תופים",
           welcome: "ברוך הבא ינון! כאן ה-PDF האישי שלך",
         },
         {
-          name: "אדמין", // שיניתי את השם מ-administor לאדמין
-          password: "אורי סיסמה בדוי", // שיניתי את הסיסמה
+          name: "אדמין",
+          password: "אורי סיסמה בדוי",
           pdfUrl:
             "https://drive.google.com/file/d/1tC3jSIXqqYkYxSVHCF2bczLGnu3niHeS/view?usp=sharing",
           videoUrl: "https://youtu.be/VsExU_j28eM",
@@ -374,7 +697,46 @@
         },
       ];
 
+      // אירועי לוח שנה (מופעל בהתחלה)
+      let calendarEvents = JSON.parse(
+        localStorage.getItem("calendarEvents")
+      ) || [
+        {
+          id: 1,
+          date: new Date().getDate(),
+          month: new Date().getMonth(),
+          year: new Date().getFullYear(),
+          time: "19:00",
+          description: "חזרה כללית",
+          type: "חזרה",
+        },
+        {
+          id: 2,
+          date: new Date().getDate() + 3,
+          month: new Date().getMonth(),
+          year: new Date().getFullYear(),
+          time: "18:30",
+          description: "חזרת סקסופונים",
+          type: "חזרת כלים",
+        },
+        {
+          id: 3,
+          date: new Date().getDate() + 7,
+          month: new Date().getMonth(),
+          year: new Date().getFullYear(),
+          time: "20:00",
+          description: "הופעה במועדון",
+          type: "הופעה",
+        },
+      ];
+
+      // תזכורות שהוגדרו
+      let reminders = JSON.parse(localStorage.getItem("reminders")) || {};
+
       let currentUser = null;
+      let currentMonth = new Date().getMonth();
+      let currentYear = new Date().getFullYear();
+      let notificationPermission = false;
 
       // התחברות
       function login() {
@@ -475,7 +837,6 @@
         // בחר את הסרטון המתאים לפי המשתמש
         let audioVideoUrl;
         if (isAdmin || isYinon) {
-          // ינון מקבל את אותו הסרטון כמו האדמין
           audioVideoUrl = "https://youtu.be/VsExU_j28eM";
         } else if (isLidor) {
           audioVideoUrl =
@@ -886,6 +1247,705 @@
         document.getElementById("pagesContainer").innerHTML = page;
       }
 
+      // פונקציה לפתיחת לוח שנה
+      function openCalendar() {
+        const isAdmin = currentUser.name === "אדמין";
+
+        // בדוק הרשאת התראות
+        checkNotificationPermission();
+
+        const page = `
+            <div class="page-content">
+                <button class="back-btn" onclick="closePage()">← חזרה לרשימה</button>
+
+                <div class="user-info" style="margin-bottom: 20px;">
+                    ${isAdmin ? '<span class="admin-badge">👑 מנהל</span>' : ""}
+                    ${getUserBadge(currentUser.name)}
+                    👤 ${currentUser.name} - ${currentUser.role}
+                </div>
+
+                <h2 style="color: #38bdf8; text-align: center; margin-bottom: 30px;">📅 לוח שנה וזמנים</h2>
+
+                <div class="content-box">
+                    <div style="font-size: 60px; margin-bottom: 20px;">📅</div>
+                    <h3 style="color: #38bdf8; margin-bottom: 15px;">לוח אירועים וזמנים</h3>
+                    <p style="color: #94a3b8; margin-bottom: 25px;">
+                        כאן תוכלו לראות את כל האירועים, החזרות וההופעות של הלהקה<br>
+                        <span style="color: #38bdf8; font-weight: 600;">ניתן לקבוע תזכורות לאירועים!</span>
+                    </p>
+
+                    <div style="margin: 30px 0;">
+                        ${
+                          isAdmin
+                            ? `<button class="action-btn edit-btn" onclick="openAddEventModal()">
+                                   ✏️ הוסף אירוע חדש
+                               </button>
+                               <button class="action-btn delete-events-btn" onclick="deleteAllEvents()">
+                                   🗑️ מחק כל האירועים
+                               </button>`
+                            : ""
+                        }
+                        
+                        <button class="action-btn reminder-all-btn" onclick="setRemindersForAllEvents()">
+                            ⏰ תזכורת לכל האירועים
+                        </button>
+                    </div>
+                    
+                    ${
+                      !notificationPermission
+                        ? `
+                        <div class="permission-notice">
+                            <p>לתזכורות אמיתיות שפועלות גם כשהדפדפן סגור, יש לאשר קבלת התראות:</p>
+                            <button class="enable-notifications-btn" onclick="requestNotificationPermission()">
+                                ✅ אפשר התראות
+                            </button>
+                        </div>
+                    `
+                        : ""
+                    }
+                </div>
+
+                <div id="calendarContainer" class="calendar-container"></div>
+            </div>
+        `;
+
+        document.getElementById("mainContainer").style.display = "none";
+        document.getElementById("pagesContainer").innerHTML = page;
+
+        // הפונקציות זמינות באופן גלובלי
+        window.renderCalendar = renderCalendar;
+        window.openAddEventModal = openAddEventModal;
+        window.prevMonth = prevMonth;
+        window.nextMonth = nextMonth;
+        window.openDayEvents = openDayEvents;
+        window.setReminder = setReminder;
+        window.saveEvent = saveEvent;
+        window.cancelEvent = cancelEvent;
+        window.deleteEvent = deleteEvent;
+        window.deleteAllEvents = deleteAllEvents;
+        window.setRemindersForAllEvents = setRemindersForAllEvents;
+        window.requestNotificationPermission = requestNotificationPermission;
+
+        // הצג את לוח השנה
+        renderCalendar();
+      }
+
+      // פונקציה לקבלת תג למשתמש
+      function getUserBadge(userName) {
+        switch (userName) {
+          case "לידור":
+            return '<span class="special-badge">🎵 אלט</span>';
+          case "נתנאל":
+            return '<span class="special-badge" style="background: linear-gradient(135deg, #10b981, #059669);">🎵 טנור</span>';
+          case "ניצן":
+            return '<span class="special-badge" style="background: linear-gradient(135deg, #ec4899, #db2777);">🎵 בריטון ראשון</span>';
+          case "אליאור":
+            return '<span class="special-badge" style="background: linear-gradient(135deg, #3b82f6, #1d4ed8);">🎵 בריטון שני</span>';
+          case "ינון":
+            return '<span class="special-badge" style="background: linear-gradient(135deg, #f97316, #ea580c);">🥁 תופים</span>';
+          default:
+            return "";
+        }
+      }
+
+      // בדוק הרשאת התראות
+      function checkNotificationPermission() {
+        if ("Notification" in window) {
+          notificationPermission = Notification.permission === "granted";
+        }
+        return notificationPermission;
+      }
+
+      // בקש הרשאת התראות
+      function requestNotificationPermission() {
+        if ("Notification" in window) {
+          Notification.requestPermission().then((permission) => {
+            if (permission === "granted") {
+              notificationPermission = true;
+              showNotification(
+                "✅ התראות מאושרות! תזכורות יפעלו גם כשהדפדפן סגור."
+              );
+            }
+          });
+        } else {
+          showNotification("הדפדפן שלך לא תומך בהתראות");
+        }
+      }
+
+      // פונקציה לרינדור לוח שנה
+      function renderCalendar() {
+        const container = document.getElementById("calendarContainer");
+        if (!container) return;
+
+        const monthNames = [
+          "ינואר",
+          "פברואר",
+          "מרץ",
+          "אפריל",
+          "מאי",
+          "יוני",
+          "יולי",
+          "אוגוסט",
+          "ספטמבר",
+          "אוקטובר",
+          "נובמבר",
+          "דצמבר",
+        ];
+
+        const dayNames = ["א", "ב", "ג", "ד", "ה", "ו", "ש"];
+
+        const firstDay = new Date(currentYear, currentMonth, 1);
+        const lastDay = new Date(currentYear, currentMonth + 1, 0);
+        const daysInMonth = lastDay.getDate();
+        const startingDay = firstDay.getDay();
+
+        // התאם את היום הראשון (ראשון = 0, אבל אנחנו רוצים ראשון = 0)
+        let adjustedStartingDay = startingDay === 0 ? 6 : startingDay - 1;
+
+        let calendarHTML = `
+            <div class="calendar-header">
+                <div class="calendar-title">
+                    ${monthNames[currentMonth]} ${currentYear}
+                </div>
+                <div class="month-navigation">
+                    <button class="month-btn" onclick="prevMonth()">← חודש קודם</button>
+                    <button class="month-btn" onclick="nextMonth()">חודש הבא →</button>
+                </div>
+            </div>
+
+            <div class="days-grid">
+                ${dayNames
+                  .map((day) => `<div class="day-header">${day}</div>`)
+                  .join("")}
+        `;
+
+        let dayCounter = 1;
+        const today = new Date();
+
+        // רינדור ימים ריקים בתחילת החודש
+        for (let i = 0; i < adjustedStartingDay; i++) {
+          calendarHTML += '<div class="day-cell empty-day"></div>';
+        }
+
+        // רינדור ימי החודש
+        for (let day = 1; day <= daysInMonth; day++) {
+          const dayEvents = calendarEvents.filter(
+            (event) =>
+              event.date === day &&
+              event.month === currentMonth &&
+              event.year === currentYear
+          );
+
+          const isToday =
+            day === today.getDate() &&
+            currentMonth === today.getMonth() &&
+            currentYear === today.getFullYear();
+
+          let dayClass = "day-cell";
+          if (isToday) dayClass += " today";
+          if (dayEvents.length > 0) dayClass += " has-events";
+
+          calendarHTML += `
+            <div class="${dayClass}" onclick="openDayEvents(${day})">
+                <div class="day-number">${day}</div>
+                ${dayEvents
+                  .slice(0, 2)
+                  .map(
+                    (event) => `
+                    <div class="event-item">
+                        <span class="event-time">${event.time}</span>
+                        <span class="event-desc"> - ${event.description}</span>
+                        <span class="event-type-badge" style="background: ${getEventTypeColor(
+                          event.type
+                        )}">${event.type}</span>
+                    </div>
+                `
+                  )
+                  .join("")}
+                ${
+                  dayEvents.length > 2
+                    ? `<div class="event-item" style="background: rgba(99,102,241,0.2);">
+                    +${dayEvents.length - 2} עוד
+                  </div>`
+                    : ""
+                }
+            </div>
+          `;
+
+          dayCounter++;
+        }
+
+        // השלם עם ימים ריקים בסוף החודש
+        const totalCells = 42; // 6 שורות * 7 ימים
+        const remainingCells = totalCells - (adjustedStartingDay + daysInMonth);
+
+        for (let i = 0; i < remainingCells; i++) {
+          calendarHTML += '<div class="day-cell empty-day"></div>';
+        }
+
+        calendarHTML += `
+            </div>
+            
+            ${
+              currentUser.name === "אדמין"
+                ? `
+                <div class="edit-controls">
+                    <button class="edit-btn" onclick="openAddEventModal()">✏️ הוסף אירוע חדש</button>
+                    <button class="delete-events-btn" onclick="deleteAllEvents()">🗑️ מחק כל האירועים</button>
+                </div>
+            `
+                : ""
+            }
+        `;
+
+        container.innerHTML = calendarHTML;
+      }
+
+      // קבל צבע לסוג האירוע
+      function getEventTypeColor(type) {
+        const colors = {
+          חזרה: "rgba(56, 189, 248, 0.3)",
+          "חזרת כלים": "rgba(16, 185, 129, 0.3)",
+          הופעה: "rgba(139, 92, 246, 0.3)",
+          פגישה: "rgba(245, 158, 11, 0.3)",
+          "אירוע מיוחד": "rgba(236, 72, 153, 0.3)",
+          אחר: "rgba(148, 163, 184, 0.3)",
+        };
+        return colors[type] || "rgba(148, 163, 184, 0.3)";
+      }
+
+      // חודש קודם
+      function prevMonth() {
+        currentMonth--;
+        if (currentMonth < 0) {
+          currentMonth = 11;
+          currentYear--;
+        }
+        renderCalendar();
+      }
+
+      // חודש הבא
+      function nextMonth() {
+        currentMonth++;
+        if (currentMonth > 11) {
+          currentMonth = 0;
+          currentYear++;
+        }
+        renderCalendar();
+      }
+
+      // פתח אירועי יום ספציפי
+      function openDayEvents(day) {
+        const dayEvents = calendarEvents.filter(
+          (event) =>
+            event.date === day &&
+            event.month === currentMonth &&
+            event.year === currentYear
+        );
+
+        const monthNames = [
+          "ינואר",
+          "פברואר",
+          "מרץ",
+          "אפריל",
+          "מאי",
+          "יוני",
+          "יולי",
+          "אוגוסט",
+          "ספטמבר",
+          "אוקטובר",
+          "נובמבר",
+          "דצמבר",
+        ];
+
+        let modalHTML = `
+            <div class="modal-overlay" onclick="cancelEvent()">
+                <div class="modal-content" onclick="event.stopPropagation()">
+                    <h3 class="modal-title">אירועים ליום ${day} ב${
+          monthNames[currentMonth]
+        }</h3>
+                    
+                    ${
+                      dayEvents.length === 0
+                        ? '<p style="color: #94a3b8; text-align: center; padding: 20px;">אין אירועים ביום זה</p>'
+                        : dayEvents
+                            .map(
+                              (event) => `
+                        <div style="background: ${getEventTypeColor(
+                          event.type
+                        )}; border-radius: 10px; padding: 15px; margin-bottom: 10px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <div>
+                                    <div style="color: #fff; font-weight: 600; font-size: 18px;">${
+                                      event.description
+                                    }</div>
+                                    <div style="color: #e2e8f0; font-size: 14px; margin-top: 5px;">
+                                        🕐 ${event.time} | 📍 ${event.type}
+                                    </div>
+                                </div>
+                                ${
+                                  currentUser.name === "אדמין"
+                                    ? `<button class="delete-btn" onclick="deleteEvent(${event.id})">מחק</button>`
+                                    : ""
+                                }
+                            </div>
+                            <button class="reminder-btn" style="width: 100%; margin-top: 10px;" 
+                                    onclick="setReminder(${event.id}, '${
+                                event.description
+                              }', ${day}, ${currentMonth}, ${currentYear}, '${
+                                event.time
+                              }')">
+                                ⏰ תזכורת לי
+                            </button>
+                        </div>
+                    `
+                            )
+                            .join("")
+                    }
+                    
+                    <div class="modal-buttons">
+                        ${
+                          currentUser.name === "אדמין"
+                            ? `<button class="save-btn" onclick="openAddEventModal(${day})">הוסף אירוע</button>`
+                            : ""
+                        }
+                        <button class="cancel-btn" onclick="cancelEvent()">סגור</button>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        document.body.insertAdjacentHTML("beforeend", modalHTML);
+      }
+
+      // פתח מודל להוספת אירוע
+      function openAddEventModal(day = null) {
+        if (currentUser.name !== "אדמין") {
+          showNotification("רק מנהל המערכת יכול להוסיף אירועים");
+          return;
+        }
+
+        const defaultDate = day
+          ? `${currentYear}-${String(currentMonth + 1).padStart(
+              2,
+              "0"
+            )}-${String(day).padStart(2, "0")}`
+          : `${currentYear}-${String(currentMonth + 1).padStart(2, "0")}-01`;
+
+        let modalHTML = `
+            <div class="modal-overlay" onclick="cancelEvent()">
+                <div class="modal-content" onclick="event.stopPropagation()">
+                    <h3 class="modal-title">הוספת אירוע חדש</h3>
+                    
+                    <div class="form-group">
+                        <label class="form-label">תיאור האירוע</label>
+                        <input type="text" id="eventDescription" class="form-input" placeholder="לדוגמה: חזרה כללית">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">תאריך</label>
+                        <input type="date" id="eventDate" class="form-input" value="${defaultDate}">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">שעה</label>
+                        <input type="time" id="eventTime" class="form-input" value="19:00">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">סוג האירוע</label>
+                        <select id="eventType" class="form-select">
+                            <option value="חזרה" style="color: black; background: white;">חזרה</option>
+                            <option value="חזרת כלים" style="color: black; background: white;">חזרת כלים</option>
+                            <option value="הופעה" style="color: black; background: white;">הופעה</option>
+                            <option value="פגישה" style="color: black; background: white;">פגישה</option>
+                            <option value="אירוע מיוחד" style="color: black; background: white;">אירוע מיוחד</option>
+                            <option value="אחר" style="color: black; background: white;">אחר</option>
+                        </select>
+                    </div>
+                    
+                    <div class="modal-buttons">
+                        <button class="save-btn" onclick="saveEvent()">שמור אירוע</button>
+                        <button class="cancel-btn" onclick="cancelEvent()">ביטול</button>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        document.body.insertAdjacentHTML("beforeend", modalHTML);
+      }
+
+      // שמור אירוע חדש
+      function saveEvent() {
+        const description = document.getElementById("eventDescription").value;
+        const dateStr = document.getElementById("eventDate").value;
+        const time = document.getElementById("eventTime").value;
+        const type = document.getElementById("eventType").value;
+
+        if (!description || !dateStr || !time) {
+          showNotification("נא למלא את כל השדות");
+          return;
+        }
+
+        const date = new Date(dateStr);
+        const newEvent = {
+          id: Date.now(),
+          date: date.getDate(),
+          month: date.getMonth(),
+          year: date.getFullYear(),
+          time: time,
+          description: description,
+          type: type,
+        };
+
+        calendarEvents.push(newEvent);
+        localStorage.setItem("calendarEvents", JSON.stringify(calendarEvents));
+
+        cancelEvent();
+        renderCalendar();
+        showNotification("האירוע נוסף בהצלחה!");
+      }
+
+      // מחק אירוע
+      function deleteEvent(eventId) {
+        if (currentUser.name !== "אדמין") {
+          showNotification("רק מנהל המערכת יכול למחוק אירועים");
+          return;
+        }
+
+        calendarEvents = calendarEvents.filter((event) => event.id !== eventId);
+        localStorage.setItem("calendarEvents", JSON.stringify(calendarEvents));
+
+        // סגור את כל המודלים
+        const modals = document.querySelectorAll(".modal-overlay");
+        modals.forEach((modal) => modal.remove());
+
+        renderCalendar();
+        showNotification("האירוע נמחק בהצלחה");
+      }
+
+      // מחק את כל האירועים
+      function deleteAllEvents() {
+        if (currentUser.name !== "אדמין") {
+          showNotification("רק מנהל המערכת יכול למחוק אירועים");
+          return;
+        }
+
+        if (
+          confirm(
+            "האם אתה בטוח שברצונך למחוק את כל האירועים? פעולה זו אינה ניתנת לביטול!"
+          )
+        ) {
+          calendarEvents = [];
+          localStorage.setItem(
+            "calendarEvents",
+            JSON.stringify(calendarEvents)
+          );
+          renderCalendar();
+          showNotification("כל האירועים נמחקו בהצלחה");
+        }
+      }
+
+      // בטל/סגור מודל
+      function cancelEvent() {
+        const modals = document.querySelectorAll(".modal-overlay");
+        modals.forEach((modal) => modal.remove());
+      }
+
+      // הגדר תזכורת לאירוע
+      function setReminder(eventId, description, day, month, year, time) {
+        const now = new Date();
+        const eventDate = new Date(year, month, day);
+
+        // פענח את השעה
+        const [hours, minutes] = time.split(":").map(Number);
+        eventDate.setHours(hours, minutes, 0, 0);
+
+        // שנה את הזמן לשעה אחת לפני האירוע
+        const reminderTime = new Date(eventDate.getTime() - 60 * 60 * 1000);
+
+        // בדוק אם התזכורת כבר בעבר
+        if (reminderTime < now) {
+          showNotification("לא ניתן לקבוע תזכורת לאירוע שכבר עבר");
+          return;
+        }
+
+        // בדוק אם כבר יש תזכורת לאירוע הזה
+        const reminderKey = `${eventId}_${currentUser.name}`;
+        if (reminders[reminderKey]) {
+          showNotification("כבר יש לך תזכורת לאירוע זה");
+          return;
+        }
+
+        // שמור את התזכורת
+        reminders[reminderKey] = {
+          eventId: eventId,
+          description: description,
+          reminderTime: reminderTime.getTime(),
+          eventTime: eventDate.getTime(),
+          userId: currentUser.name,
+          notified: false,
+        };
+
+        localStorage.setItem("reminders", JSON.stringify(reminders));
+
+        // תזמן את התזכורת
+        const timeUntilReminder = reminderTime.getTime() - now.getTime();
+
+        if (timeUntilReminder > 0) {
+          setTimeout(() => {
+            triggerReminder(reminders[reminderKey]);
+          }, timeUntilReminder);
+        }
+
+        showNotification(`✅ תזכורת נקבעה ל-${formatTime(reminderTime)}`);
+
+        // סגור את המודל
+        cancelEvent();
+      }
+
+      // קבע תזכורות לכל האירועים העתידיים
+      function setRemindersForAllEvents() {
+        const now = new Date();
+        let remindersSet = 0;
+
+        // קח רק אירועים עתידיים לחודש הקרוב
+        const upcomingEvents = calendarEvents.filter((event) => {
+          const eventDate = new Date(event.year, event.month, event.date);
+          const [hours, minutes] = event.time.split(":").map(Number);
+          eventDate.setHours(hours, minutes, 0, 0);
+
+          // בדוק אם האירוע בעתיד ובתוך החודש הקרוב
+          return (
+            eventDate > now &&
+            eventDate < new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000)
+          );
+        });
+
+        if (upcomingEvents.length === 0) {
+          showNotification("אין אירועים עתידיים לחודש הקרוב");
+          return;
+        }
+
+        upcomingEvents.forEach((event) => {
+          const reminderKey = `${event.id}_${currentUser.name}`;
+
+          // בדוק אם כבר יש תזכורת
+          if (!reminders[reminderKey]) {
+            const eventDate = new Date(event.year, event.month, event.date);
+            const [hours, minutes] = event.time.split(":").map(Number);
+            eventDate.setHours(hours, minutes, 0, 0);
+
+            const reminderTime = new Date(eventDate.getTime() - 60 * 60 * 1000);
+
+            if (reminderTime > now) {
+              reminders[reminderKey] = {
+                eventId: event.id,
+                description: event.description,
+                reminderTime: reminderTime.getTime(),
+                eventTime: eventDate.getTime(),
+                userId: currentUser.name,
+                notified: false,
+              };
+
+              remindersSet++;
+
+              // תזמן את התזכורת
+              const timeUntilReminder = reminderTime.getTime() - now.getTime();
+              if (timeUntilReminder > 0) {
+                setTimeout(() => {
+                  triggerReminder(reminders[reminderKey]);
+                }, timeUntilReminder);
+              }
+            }
+          }
+        });
+
+        localStorage.setItem("reminders", JSON.stringify(reminders));
+        showNotification(`✅ נקבעו ${remindersSet} תזכורות לאירועים עתידיים`);
+      }
+
+      // הפעל תזכורת
+      function triggerReminder(reminder) {
+        if (reminder.notified) return;
+
+        // סמן ששלחנו תזכורת
+        reminder.notified = true;
+        localStorage.setItem("reminders", JSON.stringify(reminders));
+
+        // שלח התראה
+        if ("Notification" in window && Notification.permission === "granted") {
+          new Notification("⏰ תזכורת מ-Lost Connection Band", {
+            body: `${reminder.description} בעוד שעה!`,
+            icon: "https://i.ibb.co/KxZZxtgN/Lost-Connection-Band-Israel.jpg",
+            tag: "band-reminder",
+          });
+        } else {
+          // אם אין הרשאות, הראה התראה בדפדפן
+          showNotification(
+            `⏰ תזכורת: ${reminder.description} בעוד שעה!`,
+            true
+          );
+        }
+      }
+
+      // פונקציית עזר לפורמט זמן
+      function formatTime(date) {
+        return date.toLocaleString("he-IL", {
+          day: "2-digit",
+          month: "2-digit",
+          year: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+      }
+
+      // הצג התראה
+      function showNotification(message, isReminder = false) {
+        const notification = document.createElement("div");
+        notification.className = "notification";
+        notification.innerHTML = message;
+
+        if (isReminder) {
+          notification.style.background = "#8b5cf6";
+          // הוסף סאונד אם אפשר
+          try {
+            const audio = new Audio(
+              "data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAZGF0YQQ="
+            );
+            audio.play().catch(() => {});
+          } catch (e) {}
+        }
+
+        document.body.appendChild(notification);
+
+        setTimeout(() => {
+          notification.remove();
+        }, 5000);
+      }
+
+      // בדוק תזכורות כל דקה (לגיבוי)
+      setInterval(() => {
+        const now = new Date().getTime();
+        for (const key in reminders) {
+          const reminder = reminders[key];
+          if (!reminder.notified && reminder.reminderTime <= now) {
+            triggerReminder(reminder);
+          }
+        }
+      }, 60000);
+
+      // בדוק תזכורות בהתחלה
+      setTimeout(() => {
+        const now = new Date().getTime();
+        for (const key in reminders) {
+          const reminder = reminders[key];
+          if (!reminder.notified && reminder.reminderTime <= now) {
+            triggerReminder(reminder);
+          }
+        }
+      }, 1000);
+
       // קיצורי מקלדת
       document.addEventListener("DOMContentLoaded", function () {
         const usernameInput = document.getElementById("username");
@@ -906,6 +1966,15 @@
             login();
           }
         });
+
+        // בקש הרשאת התראות אוטומטית
+        if ("Notification" in window && Notification.permission === "default") {
+          setTimeout(() => {
+            if (currentUser) {
+              Notification.requestPermission();
+            }
+          }, 3000);
+        }
       });
     </script>
   </body>
