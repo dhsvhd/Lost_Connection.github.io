@@ -2,10 +2,14 @@
 <html lang="he" dir="rtl">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1"
+    />
     <title>התחברות - יצירות דיגיטליות</title>
     <style>
-      /* כל הסגנונות מהקוד הקודם נשארים */
+      /* כל הסגנונות הקודמים נשארים עם תוספות */
+
       * {
         margin: 0;
         padding: 0;
@@ -14,10 +18,222 @@
       body {
         background: linear-gradient(135deg, #0f172a, #0b1320);
         color: #fff;
-        font-family: "Segoe UI", system-ui, Arial;
+        font-family: "Segoe UI", system-ui, Arial, sans-serif;
         min-height: 100vh;
+        -webkit-tap-highlight-color: transparent;
       }
 
+      /* מסך בחירת פלטפורמה */
+      .platform-section {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        padding: 20px;
+      }
+
+      .platform-title {
+        color: #38bdf8;
+        font-size: 28px;
+        margin-bottom: 40px;
+        text-align: center;
+      }
+
+      .platform-options {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        width: 100%;
+        max-width: 400px;
+      }
+
+      .platform-btn {
+        padding: 20px;
+        border-radius: 15px;
+        border: none;
+        font-size: 18px;
+        font-weight: 600;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 15px;
+        transition: all 0.3s ease;
+        background: rgba(255, 255, 255, 0.1);
+        color: white;
+        border: 2px solid rgba(56, 189, 248, 0.3);
+      }
+
+      .platform-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 20px rgba(56, 189, 248, 0.3);
+      }
+
+      .phone-btn {
+        background: linear-gradient(135deg, #0ea5e9, #0284c7);
+      }
+
+      .pc-btn {
+        background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+      }
+
+      .platform-icon {
+        font-size: 24px;
+      }
+
+      /* התאמה לנייד */
+      @media (max-width: 768px) {
+        .login-box {
+          padding: 25px 20px;
+          margin: 15px;
+          width: calc(100% - 30px);
+        }
+
+        .your-banner {
+          height: 150px;
+          margin-bottom: 25px;
+        }
+
+        .login-title {
+          font-size: 24px;
+          margin-bottom: 20px;
+        }
+
+        input {
+          padding: 14px 16px;
+          font-size: 16px;
+          margin-top: 15px;
+        }
+
+        .login-btn {
+          padding: 16px;
+          font-size: 17px;
+          margin-top: 20px;
+        }
+
+        .creations-title {
+          font-size: 28px;
+          margin-bottom: 30px;
+        }
+
+        .creation-card {
+          padding: 20px;
+          margin: 0 15px;
+        }
+
+        .creation-name {
+          font-size: 22px;
+        }
+
+        .page-content {
+          padding: 20px;
+        }
+
+        .action-btn {
+          padding: 10px 20px;
+          margin: 5px;
+          font-size: 14px;
+        }
+
+        .user-info {
+          padding: 12px;
+          font-size: 14px;
+          margin: 15px;
+        }
+
+        .calendar-container {
+          padding: 10px;
+        }
+
+        .day-cell {
+          padding: 8px;
+          min-height: 80px;
+        }
+
+        .day-number {
+          font-size: 16px;
+        }
+
+        .event-item {
+          font-size: 10px;
+          padding: 3px 5px;
+          margin-bottom: 3px;
+        }
+
+        .days-grid {
+          gap: 5px;
+        }
+
+        .day-header {
+          padding: 10px;
+          font-size: 14px;
+        }
+
+        .calendar-header {
+          padding: 15px;
+          flex-direction: column;
+          gap: 15px;
+        }
+
+        .calendar-title {
+          font-size: 22px;
+        }
+
+        .month-navigation {
+          width: 100%;
+          justify-content: space-between;
+        }
+
+        .month-btn {
+          padding: 8px 16px;
+          font-size: 14px;
+        }
+
+        .device-buttons {
+          flex-direction: column;
+        }
+
+        .ios-btn,
+        .android-btn {
+          width: 100%;
+          justify-content: center;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .your-banner {
+          height: 120px;
+        }
+
+        .login-title {
+          font-size: 22px;
+        }
+
+        .creations-title {
+          font-size: 24px;
+        }
+
+        .creation-name {
+          font-size: 20px;
+        }
+
+        .days-grid {
+          grid-template-columns: repeat(7, 1fr);
+          gap: 3px;
+        }
+
+        .day-cell {
+          min-height: 70px;
+          padding: 6px;
+        }
+
+        .day-number {
+          font-size: 14px;
+        }
+      }
+
+      /* סגנונות נוספים שנשארים ללא שינוי */
       .your-banner {
         width: 100%;
         max-width: 900px;
@@ -773,11 +989,52 @@
         width: 100%;
         margin-top: 10px;
       }
+
+      /* כפתור זיכרון התחברות */
+      .remember-me {
+        display: flex;
+        align-items: center;
+        margin-top: 15px;
+        padding: 10px 0;
+      }
+
+      .remember-checkbox {
+        margin-left: 10px;
+        width: 20px;
+        height: 20px;
+      }
+
+      .remember-label {
+        color: #94a3b8;
+        font-size: 15px;
+      }
     </style>
   </head>
   <body>
+    <!-- מסך בחירת פלטפורמה -->
+    <section
+      class="platform-section"
+      id="platformSection"
+      style="display: flex"
+    >
+      <h2 class="platform-title">📱 בחר את הפלטפורמה שלך</h2>
+      <div class="platform-options">
+        <button
+          class="platform-btn phone-btn"
+          onclick="selectPlatform('phone')"
+        >
+          <span class="platform-icon">📱</span>
+          טלפון נייד
+        </button>
+        <button class="platform-btn pc-btn" onclick="selectPlatform('pc')">
+          <span class="platform-icon">💻</span>
+          מחשב
+        </button>
+      </div>
+    </section>
+
     <!-- מסך התחברות -->
-    <section class="login-section" id="loginSection">
+    <section class="login-section" id="loginSection" style="display: none">
       <div class="login-container">
         <div class="your-banner">
           <img
@@ -805,6 +1062,12 @@
             autofocus
           />
           <input id="password" type="password" placeholder="הכנס סיסמה" />
+
+          <div class="remember-me">
+            <input type="checkbox" id="rememberMe" class="remember-checkbox" />
+            <label for="rememberMe" class="remember-label">זכור אותי</label>
+          </div>
+
           <button class="login-btn" onclick="login()">התחבר למערכת</button>
         </div>
       </div>
@@ -855,6 +1118,16 @@
     <div id="pagesContainer"></div>
 
     <script>
+      // 1. מחק את כל התזכורות הקיימות
+      localStorage.removeItem("reminders");
+      let reminders = {};
+
+      // משתנה לזכירת פלטפורמה
+      let selectedPlatform = "";
+
+      // משתנה לבדיקה אם יש משתמש זכור
+      let rememberedUser = JSON.parse(localStorage.getItem("rememberedUser"));
+
       // משתמשים עם PDFים אישיים
       const users = [
         {
@@ -951,9 +1224,6 @@
         },
       ];
 
-      // תזכורות שהוגדרו
-      let reminders = JSON.parse(localStorage.getItem("reminders")) || {};
-
       let currentUser = null;
       let currentMonth = new Date().getMonth();
       let currentYear = new Date().getFullYear();
@@ -968,6 +1238,183 @@
       function isAndroid() {
         return /Android/.test(navigator.userAgent);
       }
+
+      // בחר פלטפורמה
+      function selectPlatform(platform) {
+        selectedPlatform = platform;
+        localStorage.setItem("selectedPlatform", platform);
+
+        document.getElementById("platformSection").style.display = "none";
+        document.getElementById("loginSection").style.display = "flex";
+
+        // אם יש משתמש זכור, מצא אותו אוטומטית
+        if (rememberedUser) {
+          document.getElementById("username").value = rememberedUser.username;
+          document.getElementById("password").value = rememberedUser.password;
+          document.getElementById("rememberMe").checked = true;
+
+          // בדוק אם זה טלפון - הצע התחברות אוטומטית
+          if (platform === "phone") {
+            setTimeout(() => {
+              if (confirm("מצאנו משתמש שמור. האם להכנס אוטומטית?")) {
+                login();
+              }
+            }, 500);
+          }
+        }
+      }
+
+      // בדוק אם יש משתמש זכור בעת טעינה
+      function checkRememberedUser() {
+        const remembered = localStorage.getItem("rememberedUser");
+        if (remembered) {
+          const user = JSON.parse(remembered);
+          rememberedUser = user;
+
+          // בדוק אם יש פלטפורמה שמורה
+          const savedPlatform = localStorage.getItem("selectedPlatform");
+          if (savedPlatform) {
+            selectedPlatform = savedPlatform;
+            document.getElementById("platformSection").style.display = "none";
+            document.getElementById("loginSection").style.display = "flex";
+
+            // מלא את הטופס
+            document.getElementById("username").value = user.username;
+            document.getElementById("password").value = user.password;
+            document.getElementById("rememberMe").checked = true;
+
+            // הצע התחברות אוטומטית רק בטלפון
+            if (savedPlatform === "phone") {
+              setTimeout(() => {
+                if (confirm("מצאנו משתמש שמור. האם להכנס אוטומטית?")) {
+                  login();
+                }
+              }, 1000);
+            }
+          }
+        }
+      }
+
+      // התחברות
+      function login() {
+        const username = document.getElementById("username").value.trim();
+        const password = document.getElementById("password").value.trim();
+        const rememberMe = document.getElementById("rememberMe").checked;
+        const errorAlert = document.getElementById("errorAlert");
+        errorAlert.style.display = "none";
+
+        if (!username || !password) {
+          errorAlert.textContent = "נא להזין שם משתמש וסיסמה";
+          errorAlert.style.display = "block";
+          return;
+        }
+
+        const user = users.find(
+          (u) => u.name === username && u.password === password
+        );
+        if (user) {
+          currentUser = user;
+
+          // זכור משתמש אם ביקש
+          if (rememberMe) {
+            const userToRemember = {
+              username: username,
+              password: password,
+            };
+            localStorage.setItem(
+              "rememberedUser",
+              JSON.stringify(userToRemember)
+            );
+            rememberedUser = userToRemember;
+          } else {
+            // מחק זכרון אם לא ביקש
+            localStorage.removeItem("rememberedUser");
+            rememberedUser = null;
+          }
+
+          document.getElementById("loginSection").style.display = "none";
+          document.getElementById("mainContainer").style.display = "block";
+
+          // הצג הודעת ברוך הבא עם סימן
+          const adminBadge =
+            user.name === "אדמין"
+              ? '<span class="admin-badge">👑 מנהל</span>'
+              : "";
+          const lidorBadge =
+            user.name === "לידור"
+              ? '<span class="special-badge">🎵 אלט</span>'
+              : "";
+          const natanelBadge =
+            user.name === "נתנאל"
+              ? '<span class="special-badge" style="background: linear-gradient(135deg, #10b981, #059669);">🎵 טנור</span>'
+              : "";
+          const nitzanBadge =
+            user.name === "ניצן"
+              ? '<span class="special-badge" style="background: linear-gradient(135deg, #ec4899, #db2777);">🎵 בריטון ראשון</span>'
+              : "";
+          const eliorBadge =
+            user.name === "אליאור"
+              ? '<span class="special-badge" style="background: linear-gradient(135deg, #3b82f6, #1d4ed8);">🎵 בריטון שני</span>'
+              : "";
+          const yinonBadge =
+            user.name === "ינון"
+              ? '<span class="special-badge" style="background: linear-gradient(135deg, #f97316, #ea580c);">🥁 תופים</span>'
+              : "";
+
+          document.getElementById("userWelcome").innerHTML = `
+                    ${adminBadge}${lidorBadge}${natanelBadge}${nitzanBadge}${eliorBadge}${yinonBadge}👋 ${
+            user.welcome
+          }
+                    <div style="font-size: 14px; color: #94a3b8; margin-top: 5px;">
+                        תפקיד: ${user.role} | כלי: ${user.instrument}
+                    </div>
+                    ${
+                      selectedPlatform
+                        ? `<div style="font-size: 12px; color: #64748b; margin-top: 5px;">
+                        📱 פלטפורמה: ${
+                          selectedPlatform === "phone" ? "טלפון" : "מחשב"
+                        }
+                    </div>`
+                        : ""
+                    }
+                `;
+
+          // התאם גודל אלמנטים לפלטפורמה
+          if (selectedPlatform === "phone") {
+            document.body.classList.add("mobile-optimized");
+          } else {
+            document.body.classList.remove("mobile-optimized");
+          }
+        } else {
+          errorAlert.textContent = "שם משתמש או סיסמה לא נכונים";
+          errorAlert.style.display = "block";
+          document.getElementById("password").value = "";
+        }
+      }
+
+      // התנתקות
+      function logout() {
+        // שאל האם למחוק זכרון
+        if (rememberedUser && confirm("האם למחוק גם את זכרון ההתחברות?")) {
+          localStorage.removeItem("rememberedUser");
+          localStorage.removeItem("selectedPlatform");
+          rememberedUser = null;
+          selectedPlatform = "";
+        }
+
+        currentUser = null;
+        document.getElementById("platformSection").style.display = "flex";
+        document.getElementById("loginSection").style.display = "none";
+        document.getElementById("mainContainer").style.display = "none";
+        document.getElementById("username").value = "";
+        document.getElementById("password").value = "";
+        document.getElementById("pagesContainer").innerHTML = "";
+        document.getElementById("userWelcome").innerHTML = "";
+        document.getElementById("rememberMe").checked = false;
+      }
+
+      // שאר הפונקציות נשארות כמו שהיו...
+      // (המשך הקוד נשאר זהה עם כל הפונקציות הקיימות)
 
       // התראה על מסך מלא - עם תמונה של הלהקה
       function showEmergencyReminder(reminder) {
@@ -1043,45 +1490,6 @@
         }, 60000);
       }
 
-      // צליל תזכורת עדין
-      function createGentleReminderSound() {
-        try {
-          const audioContext = new (window.AudioContext ||
-            window.webkitAudioContext)();
-
-          // צור צליל נעים
-          const oscillator = audioContext.createOscillator();
-          const gainNode = audioContext.createGain();
-
-          oscillator.connect(gainNode);
-          gainNode.connect(audioContext.destination);
-
-          // צליל נעים של פעמון
-          oscillator.frequency.setValueAtTime(523.25, audioContext.currentTime);
-          oscillator.frequency.exponentialRampToValueAtTime(
-            392.0,
-            audioContext.currentTime + 0.5
-          );
-
-          oscillator.type = "sine";
-
-          // עוצמה נעימה
-          gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-          gainNode.gain.exponentialRampToValueAtTime(
-            0.01,
-            audioContext.currentTime + 1
-          );
-
-          oscillator.start(audioContext.currentTime);
-          oscillator.stop(audioContext.currentTime + 1);
-
-          return audioContext;
-        } catch (error) {
-          console.error("לא ניתן ליצור צליל תזכורת:", error);
-          return null;
-        }
-      }
-
       // בדוק תזכורות שהגיע זמנן
       function checkReminders() {
         const now = new Date().getTime();
@@ -1095,23 +1503,17 @@
         }
       }
 
-      // בדוק תזכורות כל 30 שניות
-      setInterval(checkReminders, 30000);
-
       // פונקציה ליצירת קישור להוספה ליומן
       function createCalendarLink(description, day, month, year, time) {
-        // הפוך את התאריך לפורמט YYYYMMDD
         const formattedDate = `${year}${String(month + 1).padStart(
           2,
           "0"
         )}${String(day).padStart(2, "0")}`;
 
-        // פורמט זמן: HHMMSS
         const [hours, minutes] = time.split(":");
         const formattedTime = `${hours}${minutes}00`;
 
         if (isIOS()) {
-          // קישור לאייפון - יוצר אירוע ביומן
           return `data:text/calendar;charset=utf-8,BEGIN:VCALENDAR%0AVERSION:2.0%0ABEGIN:VEVENT%0ASUMMARY:${encodeURIComponent(
             description
           )}%0ADTSTART:${formattedDate}T${formattedTime}%0ADTEND:${formattedDate}T${
@@ -1120,7 +1522,6 @@
             description
           )}%20-%20Lost%20Connection%20Band%0AEND:VEVENT%0AEND:VCALENDAR`;
         } else if (isAndroid()) {
-          // קישור לאנדרואיד - פותח את יומן Google
           const endDate = new Date(
             year,
             month,
@@ -1143,7 +1544,6 @@
             "חזרת Lost Connection Band"
           )}&location=חזרת%20Lost%20Connection%20Band`;
         } else {
-          // לדפדפן רגיל
           return `data:text/calendar;charset=utf-8,BEGIN:VCALENDAR%0AVERSION:2.0%0ABEGIN:VEVENT%0ASUMMARY:${encodeURIComponent(
             description
           )}%0ADTSTART:${formattedDate}T${formattedTime}%0ADTEND:${formattedDate}T${
@@ -1152,290 +1552,6 @@
             description
           )}%20-%20Lost%20Connection%20Band%0AEND:VEVENT%0AEND:VCALENDAR`;
         }
-      }
-
-      // הצג הוראות להוספה ליומן
-      function showCalendarInstructions(description, day, month, year, time) {
-        const isIOSDevice = isIOS();
-        const isAndroidDevice = isAndroid();
-
-        let instructionsHTML = "";
-
-        if (isIOSDevice) {
-          instructionsHTML = `
-                    <div class="instructions-modal">
-                        <div class="instructions-content">
-                            <h3 class="instructions-title">📱 הוספה ליומן באייפון</h3>
-                            <div class="instructions-steps">
-                                <ol>
-                                    <li>לחץ על הכפתור "הורד קובץ יומן"</li>
-                                    <li>בחר "הוסף ליומן" מהתפריט שנפתח</li>
-                                    <li>בדוק את פרטי האירוע ולחץ "שמור"</li>
-                                    <li>האירוע יתווסף ליומן הטלפון שלך</li>
-                                </ol>
-                                <p style="color: #38bdf8; text-align: center; margin-top: 20px;">
-                                    האירוע יתווסף ליום ${day}/${
-            month + 1
-          }/${year} בשעה ${time}
-                                </p>
-                            </div>
-                            <a href="${createCalendarLink(
-                              description,
-                              day,
-                              month,
-                              year,
-                              time
-                            )}" download="lost-connection-event.ics" class="ios-btn" style="width: 100%; justify-content: center; text-decoration: none;">
-                                <span class="calendar-icon">📥</span>
-                                הורד קובץ יומן
-                            </a>
-                            <button class="instructions-close" onclick="this.closest('.instructions-modal').remove()">
-                                סגור
-                            </button>
-                        </div>
-                    </div>
-                `;
-        } else if (isAndroidDevice) {
-          instructionsHTML = `
-                    <div class="instructions-modal">
-                        <div class="instructions-content">
-                            <h3 class="instructions-title">📱 הוספה ליומן באנדרואיד</h3>
-                            <div class="instructions-steps">
-                                <ol>
-                                    <li>לחץ על הכפתור "פתח ביומן Google"</li>
-                                    <li>המערכת תפתח את יומן Google</li>
-                                    <li>בדוק את פרטי האירוע ולחץ "שמור"</li>
-                                    <li>האירוע יתווסף ליומן שלך באופן אוטומטי</li>
-                                </ol>
-                                <p style="color: #38bdf8; text-align: center; margin-top: 20px;">
-                                    האירוע יתווסף ליום ${day}/${
-            month + 1
-          }/${year} בשעה ${time}
-                                </p>
-                            </div>
-                            <a href="${createCalendarLink(
-                              description,
-                              day,
-                              month,
-                              year,
-                              time
-                            )}" target="_blank" class="android-btn" style="width: 100%; justify-content: center; text-decoration: none;">
-                                <span class="calendar-icon">📅</span>
-                                פתח ביומן Google
-                            </a>
-                            <button class="instructions-close" onclick="this.closest('.instructions-modal').remove()">
-                                סגור
-                            </button>
-                        </div>
-                    </div>
-                `;
-        } else {
-          instructionsHTML = `
-                    <div class="instructions-modal">
-                        <div class="instructions-content">
-                            <h3 class="instructions-title">💻 הוספה ליומן</h3>
-                            <div class="instructions-steps">
-                                <ol>
-                                    <li>לחץ על הכפתור "הורד קובץ יומן"</li>
-                                    <li>שמור את הקובץ במחשב שלך</li>
-                                    <li>פתח את יומן הטלפון או המחשב שלך</li>
-                                    <li>יבא את קובץ ה-.ics ליומן</li>
-                                </ol>
-                                <p style="color: #38bdf8; text-align: center; margin-top: 20px;">
-                                    האירוע יתווסף ליום ${day}/${
-            month + 1
-          }/${year} בשעה ${time}
-                                </p>
-                            </div>
-                            <a href="${createCalendarLink(
-                              description,
-                              day,
-                              month,
-                              year,
-                              time
-                            )}" download="lost-connection-event.ics" class="ios-btn" style="width: 100%; justify-content: center; text-decoration: none;">
-                                <span class="calendar-icon">📥</span>
-                                הורד קובץ יומן
-                            </a>
-                            <button class="instructions-close" onclick="this.closest('.instructions-modal').remove()">
-                                סגור
-                            </button>
-                        </div>
-                    </div>
-                `;
-        }
-
-        // סגור את ההתראה הקודמת
-        const existingAlert = document.querySelector(".emergency-notification");
-        if (existingAlert) {
-          existingAlert.remove();
-        }
-
-        document.body.insertAdjacentHTML("beforeend", instructionsHTML);
-      }
-
-      // פונקציה להצגת כפתורים להוספה ליומן
-      function showCalendarButtons() {
-        return `
-                <div class="device-notice">
-                    <p style="color: #38bdf8; text-align: center; margin-bottom: 15px; font-weight: 600;">
-                        📱 לקבלת תזכורות אמינות גם כשהדפדפן סגור:
-                    </p>
-                    <p style="color: #94a3b8; font-size: 14px; text-align: center; margin-bottom: 15px;">
-                        הוסף את האירועים ליומן הטלפון שלך
-                    </p>
-                    <div class="device-buttons">
-                        <button class="ios-btn" onclick="showDeviceInstructions('ios')">
-                            <span class="calendar-icon"></span>
-                            לאייפון
-                        </button>
-                        <button class="android-btn" onclick="showDeviceInstructions('android')">
-                            <span class="calendar-icon">🤖</span>
-                            לאנדרואיד
-                        </button>
-                    </div>
-                </div>
-            `;
-      }
-
-      // הצג הוראות למכשיר ספציפי
-      function showDeviceInstructions(deviceType) {
-        let title = "";
-        let steps = "";
-        let buttonText = "";
-
-        if (deviceType === "ios") {
-          title = " הוספת אירועים ליומן באייפון";
-          steps = `
-                    <ol>
-                        <li>לחץ על כל אירוע בלוח השנה</li>
-                        <li>לחץ על כפתור "תזכורת לי"</li>
-                        <li>בחר "הוסף ליומן הטלפון"</li>
-                        <li>לחץ על "הורד קובץ יומן"</li>
-                        <li>בחר "הוסף ליומן" מהתפריט</li>
-                        <li>שמור את האירוע</li>
-                    </ol>
-                    <p style="color: #38bdf8; margin-top: 15px;">
-                        האירוע יתווסף ליומן המובנה של האייפון שלך!
-                    </p>
-                `;
-          buttonText = "הבנתי";
-        } else {
-          title = "🤖 הוספת אירועים ליומן באנדרואיד";
-          steps = `
-                    <ol>
-                        <li>לחץ על כל אירוע בלוח השנה</li>
-                        <li>לחץ על כפתור "תזכורת לי"</li>
-                        <li>בחר "הוסף ליומן הטלפון"</li>
-                        <li>לחץ על "פתח ביומן Google"</li>
-                        <li>האירוע ייפתח ביומן Google</li>
-                        <li>לחץ "שמור"</li>
-                    </ol>
-                    <p style="color: #38bdf8; margin-top: 15px;">
-                        האירוע יתווסף ליומן Google שלך ויסינכרן עם כל המכשירים!
-                    </p>
-                `;
-          buttonText = "הבנתי";
-        }
-
-        const instructionsHTML = `
-                <div class="instructions-modal">
-                    <div class="instructions-content">
-                        <h3 class="instructions-title">${title}</h3>
-                        <div class="instructions-steps">
-                            ${steps}
-                        </div>
-                        <button class="instructions-close" onclick="this.closest('.instructions-modal').remove()">
-                            ${buttonText}
-                        </button>
-                    </div>
-                </div>
-            `;
-
-        document.body.insertAdjacentHTML("beforeend", instructionsHTML);
-      }
-
-      // התחברות
-      function login() {
-        const username = document.getElementById("username").value.trim();
-        const password = document.getElementById("password").value.trim();
-        const errorAlert = document.getElementById("errorAlert");
-        errorAlert.style.display = "none";
-
-        if (!username || !password) {
-          errorAlert.textContent = "נא להזין שם משתמש וסיסמה";
-          errorAlert.style.display = "block";
-          return;
-        }
-
-        const user = users.find(
-          (u) => u.name === username && u.password === password
-        );
-        if (user) {
-          currentUser = user;
-          document.getElementById("loginSection").style.display = "none";
-          document.getElementById("mainContainer").style.display = "block";
-
-          // הצג הודעת ברוך הבא עם סימן
-          const adminBadge =
-            user.name === "אדמין"
-              ? '<span class="admin-badge">👑 מנהל</span>'
-              : "";
-          const lidorBadge =
-            user.name === "לידור"
-              ? '<span class="special-badge">🎵 אלט</span>'
-              : "";
-          const natanelBadge =
-            user.name === "נתנאל"
-              ? '<span class="special-badge" style="background: linear-gradient(135deg, #10b981, #059669);">🎵 טנור</span>'
-              : "";
-          const nitzanBadge =
-            user.name === "ניצן"
-              ? '<span class="special-badge" style="background: linear-gradient(135deg, #ec4899, #db2777);">🎵 בריטון ראשון</span>'
-              : "";
-          const eliorBadge =
-            user.name === "אליאור"
-              ? '<span class="special-badge" style="background: linear-gradient(135deg, #3b82f6, #1d4ed8);">🎵 בריטון שני</span>'
-              : "";
-          const yinonBadge =
-            user.name === "ינון"
-              ? '<span class="special-badge" style="background: linear-gradient(135deg, #f97316, #ea580c);">🥁 תופים</span>'
-              : "";
-
-          document.getElementById("userWelcome").innerHTML = `
-                    ${adminBadge}${lidorBadge}${natanelBadge}${nitzanBadge}${eliorBadge}${yinonBadge}👋 ${user.welcome}
-                    <div style="font-size: 14px; color: #94a3b8; margin-top: 5px;">
-                        תפקיד: ${user.role} | כלי: ${user.instrument}
-                    </div>
-                `;
-
-          // בדוק תזכורות אחרי התחברות
-          setTimeout(checkReminders, 1000);
-
-          // בקש הרשאות התראות
-          requestNotificationPermission();
-        } else {
-          errorAlert.textContent = "שם משתמש או סיסמה לא נכונים";
-          errorAlert.style.display = "block";
-          document.getElementById("password").value = "";
-        }
-      }
-
-      // התנתקות
-      function logout() {
-        currentUser = null;
-        document.getElementById("loginSection").style.display = "flex";
-        document.getElementById("mainContainer").style.display = "none";
-        document.getElementById("username").value = "";
-        document.getElementById("password").value = "";
-        document.getElementById("pagesContainer").innerHTML = "";
-        document.getElementById("userWelcome").innerHTML = "";
-      }
-
-      // פונקציה לסגירת דף
-      function closePage() {
-        document.getElementById("pagesContainer").innerHTML = "";
-        document.getElementById("mainContainer").style.display = "block";
       }
 
       // פונקציה לפתיחת SHAPE OF YOU
@@ -1457,7 +1573,6 @@
         const hasAudioVideo =
           isAdmin || isLidor || isNatanel || isNitzan || isElior || isYinon;
 
-        // בחר את הסרטון המתאים לפי המשתמש
         let audioVideoUrl;
         if (isAdmin || isYinon) {
           audioVideoUrl = "https://youtu.be/VsExU_j28eM";
@@ -1478,7 +1593,6 @@
             currentUser.videoUrl || "https://youtu.be/-R_QdkLAJTI";
         }
 
-        // יצירת קוד הטמעה מיוטיוב
         const videoId = audioVideoUrl.split("/").pop().split("?v=").pop();
         const embedUrl = `https://www.youtube.com/embed/${videoId}`;
 
@@ -1631,154 +1745,6 @@
                                     ↗️ פתח ביוטיוב מלא
                                 </a>
                             </div>
-
-                            <div style="margin-top: 25px; padding: 15px; background: ${
-                              isAdmin
-                                ? "rgba(245,158,11,0.1)"
-                                : isLidor
-                                ? "rgba(139,92,246,0.1)"
-                                : isNatanel
-                                ? "rgba(16,185,129,0.1)"
-                                : isNitzan
-                                ? "rgba(236,72,153,0.1)"
-                                : isElior
-                                ? "rgba(59,130,246,0.1)"
-                                : isYinon
-                                ? "rgba(249,115,22,0.1)"
-                                : "rgba(56,189,248,0.1)"
-                            }; border-radius: 10px;">
-                                <p style="color: ${
-                                  isAdmin
-                                    ? "#f59e0b"
-                                    : isLidor
-                                    ? "#c4b5fd"
-                                    : isNatanel
-                                    ? "#6ee7b7"
-                                    : isNitzan
-                                    ? "#f9a8d4"
-                                    : isElior
-                                    ? "#93c5fd"
-                                    : isYinon
-                                    ? "#fdba74"
-                                    : "#38bdf8"
-                                }; font-size: 14px;">
-                                    💡 טיפ: פתח את ה-PDF בחלון נפרד וצפה בסרטון במקביל לתרגול האינטראקציה.
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- קרדיטים -->
-                    <div class="content-box">
-                        <h3 style="color: #38bdf8; margin-bottom: 20px;">🎵 חברי הלהקה</h3>
-
-                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin: 25px 0;">
-                            ${users
-                              .map(
-                                (user) => `
-                                <div style="background: ${
-                                  user.name === currentUser.name
-                                    ? "rgba(56,189,248,0.2)"
-                                    : user.name === "אדמין"
-                                    ? "rgba(245,158,11,0.2)"
-                                    : user.name === "לידור"
-                                    ? "rgba(139,92,246,0.2)"
-                                    : user.name === "נתנאל"
-                                    ? "rgba(16,185,129,0.2)"
-                                    : user.name === "ניצן"
-                                    ? "rgba(236,72,153,0.2)"
-                                    : user.name === "אליאור"
-                                    ? "rgba(59,130,246,0.2)"
-                                    : user.name === "ינון"
-                                    ? "rgba(249,115,22,0.2)"
-                                    : "rgba(255,255,255,0.05)"
-                                };
-                                    padding: 15px; border-radius: 10px; text-align: center; border: ${
-                                      user.name === currentUser.name
-                                        ? "2px solid #38bdf8"
-                                        : user.name === "אדמין"
-                                        ? "2px solid #f59e0b"
-                                        : user.name === "לידור"
-                                        ? "2px solid #8b5cf6"
-                                        : user.name === "נתנאל"
-                                        ? "2px solid #10b981"
-                                        : user.name === "ניצן"
-                                        ? "2px solid #ec4899"
-                                        : user.name === "אליאור"
-                                        ? "2px solid #3b82f6"
-                                        : user.name === "ינון"
-                                        ? "2px solid #f97316"
-                                        : "none"
-                                    };">
-                                    <div style="color: ${
-                                      user.name === currentUser.name
-                                        ? "#fff"
-                                        : user.name === "אדמין"
-                                        ? "#fbbf24"
-                                        : user.name === "לידור"
-                                        ? "#c4b5fd"
-                                        : user.name === "נתנאל"
-                                        ? "#6ee7b7"
-                                        : user.name === "ניצן"
-                                        ? "#f9a8d4"
-                                        : user.name === "אליאור"
-                                        ? "#93c5fd"
-                                        : user.name === "ינון"
-                                        ? "#fdba74"
-                                        : "#38bdf8"
-                                    }; font-weight: 600; font-size: 18px;">
-                                        ${user.name} ${
-                                  user.name === currentUser.name
-                                    ? "👈"
-                                    : user.name === "אדמין"
-                                    ? "👑"
-                                    : ""
-                                }
-                                    </div>
-                                    <div style="color: #94a3b8; font-size: 14px;">${
-                                      user.role
-                                    }</div>
-                                    ${
-                                      user.pdfUrl &&
-                                      user.pdfUrl.includes(
-                                        "drive.google.com"
-                                      ) &&
-                                      user.name === currentUser.name
-                                        ? `<div style="color: #10b981; font-size: 12px; margin-top: 5px;">✓ PDF זמין</div>`
-                                        : ""
-                                    }
-                                    ${
-                                      user.name === "אדמין" ||
-                                      user.name === "לידור" ||
-                                      user.name === "נתנאל" ||
-                                      user.name === "ניצן" ||
-                                      user.name === "אליאור" ||
-                                      user.name === "ינון"
-                                        ? `<div style="color: ${
-                                            user.name === "אדמין"
-                                              ? "#f59e0b"
-                                              : user.name === "לידור"
-                                              ? "#8b5cf6"
-                                              : user.name === "נתנאל"
-                                              ? "#10b981"
-                                              : user.name === "ניצן"
-                                              ? "#ec4899"
-                                              : user.name === "אליאור"
-                                              ? "#3b82f6"
-                                              : "#f97316"
-                                          }; font-size: 12px; margin-top: 5px;">🎵 PDF+שמע</div>`
-                                        : ""
-                                    }
-                                </div>
-                            `
-                              )
-                              .join("")}
-                        </div>
-
-                        <div style="margin-top: 25px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1);">
-                            <p style="color: #94a3b8; text-align: center;">
-                                <strong>עובד על ידי:</strong> נתנאל קיומוב הגבר
-                            </p>
                         </div>
                     </div>
                 </div>
@@ -1787,7 +1753,6 @@
         document.getElementById("mainContainer").style.display = "none";
         document.getElementById("pagesContainer").innerHTML = page;
 
-        // אם יש גישה ל-PDF+שמע, הוסף את הפונקציה showAudioVideo
         if (hasAudioVideo) {
           window.showAudioVideo = function () {
             document.getElementById("audioVideoSection").style.display =
@@ -1961,7 +1926,6 @@
         document.getElementById("mainContainer").style.display = "none";
         document.getElementById("pagesContainer").innerHTML = page;
 
-        // הפונקציות זמינות באופן גלובלי
         window.renderCalendar = renderCalendar;
         window.openAddEventModal = openAddEventModal;
         window.prevMonth = prevMonth;
@@ -1975,11 +1939,7 @@
         window.deleteAllEvents = deleteAllEvents;
         window.setRemindersForAllEvents = setRemindersForAllEvents;
         window.requestNotificationPermission = requestNotificationPermission;
-        window.showCalendarInstructions = showCalendarInstructions;
-        window.showDeviceInstructions = showDeviceInstructions;
-        window.createCalendarLink = createCalendarLink;
 
-        // הצג את לוח השנה
         renderCalendar();
       }
 
@@ -1988,7 +1948,6 @@
         reminderMinutesBefore = minutes;
         localStorage.setItem("reminderMinutesBefore", minutes);
 
-        // עדכן את הכפתורים הפעילים
         document.querySelectorAll(".reminder-option-btn").forEach((btn) => {
           btn.classList.remove("active");
         });
@@ -2018,29 +1977,23 @@
         const now = new Date();
         let eventDate = new Date(year, month, day);
 
-        // פענח את השעה
         const [hours, minutes] = time.split(":").map(Number);
         eventDate.setHours(hours, minutes, 0, 0);
 
-        // בדוק אם השעה כבר עברה היום
         if (eventDate <= now) {
-          // אם השעה כבר עברה היום, הוסף יום
           eventDate.setDate(eventDate.getDate() + 1);
         }
 
-        // שנה את הזמן לכמה דקות לפני האירוע (לפי ההגדרה)
         let reminderTime = new Date(
           eventDate.getTime() - reminderMinutesBefore * 60 * 1000
         );
 
-        // אם התזכורת כבר בעבר, שנה לזמן קרוב
         if (reminderTime <= now) {
           reminderTime = new Date(now.getTime() + 5 * 60 * 1000);
         }
 
         const reminderKey = `${eventId}_${currentUser.name}`;
 
-        // שמור את התזכורת
         reminders[reminderKey] = {
           eventId: eventId,
           description: description,
@@ -2057,14 +2010,10 @@
 
         localStorage.setItem("reminders", JSON.stringify(reminders));
 
-        // הצג הודעה עם אפשרות להוספה ליומן הטלפון
         showCalendarInstructions(description, day, month, year, time);
-
-        // סגור את המודל
         cancelEvent();
       }
 
-      // פונקציות נוספות שצריכות להיות זמינות
       function getUserBadge(userName) {
         switch (userName) {
           case "לידור":
@@ -2129,12 +2078,10 @@
         let dayCounter = 1;
         const today = new Date();
 
-        // רינדור ימים ריקים בתחילת החודש
         for (let i = 0; i < adjustedStartingDay; i++) {
           calendarHTML += '<div class="day-cell empty-day"></div>';
         }
 
-        // רינדור ימי החודש
         for (let day = 1; day <= daysInMonth; day++) {
           const dayEvents = calendarEvents.filter(
             (event) =>
@@ -2183,7 +2130,6 @@
           dayCounter++;
         }
 
-        // השלם עם ימים ריקים בסוף החודש
         const totalCells = 42;
         const remainingCells = totalCells - (adjustedStartingDay + daysInMonth);
         for (let i = 0; i < remainingCells; i++) {
@@ -2204,7 +2150,6 @@
         container.innerHTML = calendarHTML;
       }
 
-      // קבל צבע לסוג האירוע
       function getEventTypeColor(type) {
         const colors = {
           חזרה: "rgba(56, 189, 248, 0.3)",
@@ -2217,7 +2162,6 @@
         return colors[type] || "rgba(148, 163, 184, 0.3)";
       }
 
-      // חודש קודם
       function prevMonth() {
         currentMonth--;
         if (currentMonth < 0) {
@@ -2227,7 +2171,6 @@
         renderCalendar();
       }
 
-      // חודש הבא
       function nextMonth() {
         currentMonth++;
         if (currentMonth > 11) {
@@ -2237,7 +2180,6 @@
         renderCalendar();
       }
 
-      // פתח אירועי יום ספציפי
       function openDayEvents(day) {
         const dayEvents = calendarEvents.filter(
           (event) =>
@@ -2509,6 +2451,207 @@
         showNotification(`✅ נקבעו ${remindersSet} תזכורות לאירועים עתידיים`);
       }
 
+      // הצג כפתורים להוספה ליומן הטלפון
+      function showCalendarButtons() {
+        return `
+                <div class="device-notice">
+                    <p style="color: #38bdf8; text-align: center; margin-bottom: 15px; font-weight: 600;">
+                        📱 לקבלת תזכורות אמינות גם כשהדפדפן סגור:
+                    </p>
+                    <p style="color: #94a3b8; font-size: 14px; text-align: center; margin-bottom: 15px;">
+                        הוסף את האירועים ליומן הטלפון שלך
+                    </p>
+                    <div class="device-buttons">
+                        <button class="ios-btn" onclick="showDeviceInstructions('ios')">
+                            <span class="calendar-icon"></span>
+                            לאייפון
+                        </button>
+                        <button class="android-btn" onclick="showDeviceInstructions('android')">
+                            <span class="calendar-icon">🤖</span>
+                            לאנדרואיד
+                        </button>
+                    </div>
+                </div>
+            `;
+      }
+
+      // הצג הוראות למכשיר ספציפי
+      function showDeviceInstructions(deviceType) {
+        let title = "";
+        let steps = "";
+        let buttonText = "";
+
+        if (deviceType === "ios") {
+          title = " הוספת אירועים ליומן באייפון";
+          steps = `
+                    <ol>
+                        <li>לחץ על כל אירוע בלוח השנה</li>
+                        <li>לחץ על כפתור "תזכורת לי"</li>
+                        <li>בחר "הוסף ליומן הטלפון"</li>
+                        <li>לחץ על "הורד קובץ יומן"</li>
+                        <li>בחר "הוסף ליומן" מהתפריט</li>
+                        <li>שמור את האירוע</li>
+                    </ol>
+                    <p style="color: #38bdf8; margin-top: 15px;">
+                        האירוע יתווסף ליומן המובנה של האייפון שלך!
+                    </p>
+                `;
+          buttonText = "הבנתי";
+        } else {
+          title = "🤖 הוספת אירועים ליומן באנדרואיד";
+          steps = `
+                    <ol>
+                        <li>לחץ על כל אירוע בלוח השנה</li>
+                        <li>לחץ על כפתור "תזכורת לי"</li>
+                        <li>בחר "הוסף ליומן הטלפון"</li>
+                        <li>לחץ על "פתח ביומן Google"</li>
+                        <li>האירוע ייפתח ביומן Google</li>
+                        <li>לחץ "שמור"</li>
+                    </ol>
+                    <p style="color: #38bdf8; margin-top: 15px;">
+                        האירוע יתווסף ליומן Google שלך ויסינכרן עם כל המכשירים!
+                    </p>
+                `;
+          buttonText = "הבנתי";
+        }
+
+        const instructionsHTML = `
+                <div class="instructions-modal">
+                    <div class="instructions-content">
+                        <h3 class="instructions-title">${title}</h3>
+                        <div class="instructions-steps">
+                            ${steps}
+                        </div>
+                        <button class="instructions-close" onclick="this.closest('.instructions-modal').remove()">
+                            ${buttonText}
+                        </button>
+                    </div>
+                </div>
+            `;
+
+        document.body.insertAdjacentHTML("beforeend", instructionsHTML);
+      }
+
+      // פונקציה להוראות הוספה ליומן
+      function showCalendarInstructions(description, day, month, year, time) {
+        const isIOSDevice = isIOS();
+        const isAndroidDevice = isAndroid();
+
+        let instructionsHTML = "";
+
+        if (isIOSDevice) {
+          instructionsHTML = `
+                    <div class="instructions-modal">
+                        <div class="instructions-content">
+                            <h3 class="instructions-title">📱 הוספה ליומן באייפון</h3>
+                            <div class="instructions-steps">
+                                <ol>
+                                    <li>לחץ על הכפתור "הורד קובץ יומן"</li>
+                                    <li>בחר "הוסף ליומן" מהתפריט שנפתח</li>
+                                    <li>בדוק את פרטי האירוע ולחץ "שמור"</li>
+                                    <li>האירוע יתווסף ליומן הטלפון שלך</li>
+                                </ol>
+                                <p style="color: #38bdf8; text-align: center; margin-top: 20px;">
+                                    האירוע יתווסף ליום ${day}/${
+            month + 1
+          }/${year} בשעה ${time}
+                                </p>
+                            </div>
+                            <a href="${createCalendarLink(
+                              description,
+                              day,
+                              month,
+                              year,
+                              time
+                            )}" download="lost-connection-event.ics" class="ios-btn" style="width: 100%; justify-content: center; text-decoration: none;">
+                                <span class="calendar-icon">📥</span>
+                                הורד קובץ יומן
+                            </a>
+                            <button class="instructions-close" onclick="this.closest('.instructions-modal').remove()">
+                                סגור
+                            </button>
+                        </div>
+                    </div>
+                `;
+        } else if (isAndroidDevice) {
+          instructionsHTML = `
+                    <div class="instructions-modal">
+                        <div class="instructions-content">
+                            <h3 class="instructions-title">📱 הוספה ליומן באנדרואיד</h3>
+                            <div class="instructions-steps">
+                                <ol>
+                                    <li>לחץ על הכפתור "פתח ביומן Google"</li>
+                                    <li>המערכת תפתח את יומן Google</li>
+                                    <li>בדוק את פרטי האירוע ולחץ "שמור"</li>
+                                    <li>האירוע יתווסף ליומן שלך באופן אוטומטי</li>
+                                </ol>
+                                <p style="color: #38bdf8; text-align: center; margin-top: 20px;">
+                                    האירוע יתווסף ליום ${day}/${
+            month + 1
+          }/${year} בשעה ${time}
+                                </p>
+                            </div>
+                            <a href="${createCalendarLink(
+                              description,
+                              day,
+                              month,
+                              year,
+                              time
+                            )}" target="_blank" class="android-btn" style="width: 100%; justify-content: center; text-decoration: none;">
+                                <span class="calendar-icon">📅</span>
+                                פתח ביומן Google
+                            </a>
+                            <button class="instructions-close" onclick="this.closest('.instructions-modal').remove()">
+                                סגור
+                            </button>
+                        </div>
+                    </div>
+                `;
+        } else {
+          instructionsHTML = `
+                    <div class="instructions-modal">
+                        <div class="instructions-content">
+                            <h3 class="instructions-title">💻 הוספה ליומן</h3>
+                            <div class="instructions-steps">
+                                <ol>
+                                    <li>לחץ על הכפתור "הורד קובץ יומן"</li>
+                                    <li>שמור את הקובץ במחשב שלך</li>
+                                    <li>פתח את יומן הטלפון או המחשב שלך</li>
+                                    <li>יבא את קובץ ה-.ics ליומן</li>
+                                </ol>
+                                <p style="color: #38bdf8; text-align: center; margin-top: 20px;">
+                                    האירוע יתווסף ליום ${day}/${
+            month + 1
+          }/${year} בשעה ${time}
+                                </p>
+                            </div>
+                            <a href="${createCalendarLink(
+                              description,
+                              day,
+                              month,
+                              year,
+                              time
+                            )}" download="lost-connection-event.ics" class="ios-btn" style="width: 100%; justify-content: center; text-decoration: none;">
+                                <span class="calendar-icon">📥</span>
+                                הורד קובץ יומן
+                            </a>
+                            <button class="instructions-close" onclick="this.closest('.instructions-modal').remove()">
+                                סגור
+                            </button>
+                        </div>
+                    </div>
+                `;
+        }
+
+        // סגור את ההתראה הקודמת
+        const existingAlert = document.querySelector(".emergency-notification");
+        if (existingAlert) {
+          existingAlert.remove();
+        }
+
+        document.body.insertAdjacentHTML("beforeend", instructionsHTML);
+      }
+
       // פונקציית עזר לפורמט זמן
       function formatTime(date) {
         return date.toLocaleString("he-IL", {
@@ -2518,6 +2661,42 @@
           hour: "2-digit",
           minute: "2-digit",
         });
+      }
+
+      // צליל תזכורת עדין
+      function createGentleReminderSound() {
+        try {
+          const audioContext = new (window.AudioContext ||
+            window.webkitAudioContext)();
+
+          const oscillator = audioContext.createOscillator();
+          const gainNode = audioContext.createGain();
+
+          oscillator.connect(gainNode);
+          gainNode.connect(audioContext.destination);
+
+          oscillator.frequency.setValueAtTime(523.25, audioContext.currentTime);
+          oscillator.frequency.exponentialRampToValueAtTime(
+            392.0,
+            audioContext.currentTime + 0.5
+          );
+
+          oscillator.type = "sine";
+
+          gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+          gainNode.gain.exponentialRampToValueAtTime(
+            0.01,
+            audioContext.currentTime + 1
+          );
+
+          oscillator.start(audioContext.currentTime);
+          oscillator.stop(audioContext.currentTime + 1);
+
+          return audioContext;
+        } catch (error) {
+          console.error("לא ניתן ליצור צליל תזכורת:", error);
+          return null;
+        }
       }
 
       // הצג התראה
@@ -2537,8 +2716,23 @@
         }, 5000);
       }
 
+      // פונקציה לסגירת דף
+      function closePage() {
+        document.getElementById("pagesContainer").innerHTML = "";
+        document.getElementById("mainContainer").style.display = "block";
+      }
+
       // טען הגדרות
       document.addEventListener("DOMContentLoaded", function () {
+        // בדוק אם יש משתמש זכור
+        checkRememberedUser();
+
+        // אם אין משתמש זכור או פלטפורמה שמורה, הצג מסך בחירת פלטפורמה
+        if (!rememberedUser || !localStorage.getItem("selectedPlatform")) {
+          document.getElementById("platformSection").style.display = "flex";
+          document.getElementById("loginSection").style.display = "none";
+        }
+
         // טען זמן תזכורת שנשמר
         const savedMinutes = localStorage.getItem("reminderMinutesBefore");
         if (savedMinutes) {
