@@ -17,7 +17,6 @@
         min-height: 100vh;
       }
 
-      /* עיצוב בסיסי */
       .your-banner {
         width: 100%;
         max-width: 900px;
@@ -170,6 +169,11 @@
         background: #475569;
         color: white;
       }
+      .disabled-btn {
+        background: #64748b;
+        color: #94a3b8;
+        cursor: not-allowed;
+      }
 
       .logout-section {
         text-align: center;
@@ -182,6 +186,16 @@
         border: 1px solid rgba(255, 255, 255, 0.2);
         border-radius: 12px;
         cursor: pointer;
+      }
+
+      .user-info {
+        text-align: center;
+        margin-bottom: 30px;
+        padding: 15px;
+        background: rgba(56, 189, 248, 0.1);
+        border-radius: 10px;
+        color: #38bdf8;
+        font-weight: 600;
       }
     </style>
   </head>
@@ -229,6 +243,8 @@
         />
       </div>
 
+      <div id="userWelcome" class="user-info"></div>
+
       <h2 class="creations-title">📁 ספריית היצירות שלי</h2>
 
       <div class="creations-list">
@@ -254,16 +270,68 @@
 
     <!-- דפים דינמיים -->
     <div id="pagesContainer"></div>
-
     <script>
-      // משתמשים
+      // משתמשים עם PDFים אישיים
       const users = [
-        { name: "נתנאל", password: "נתנאלסיסמה" },
-        { name: "אליאור", password: "אליאורסיסמה" },
-        { name: "לידור", password: "לידורסיסמה" },
-        { name: "ניצן", password: "ניצןסיסמה" },
-        { name: "ינון", password: "ינוןסיסמה" },
-      ];
+        {
+          name: "נתנאל",
+          password: "נתנאלסיסמה",
+          pdfUrl:
+            "https://drive.google.com/file/d/1bOLg2TViF8-36u01JsVyJ3eqcx8Nvstt/view?usp=sharing",
+          role: "סקסופון טנור",
+          instrument: "סקסופון",
+          welcome: "ברוך הבא נתנאל! כאן ה-PDF האישי שלך",
+        },
+        {
+          name: "אליאור",
+          password: "אליאורסיסמה",
+          pdfUrl:
+            "https://drive.google.com/file/d/1WSVpCzpAwtL7-QijJgxShWFNy-Vp7ui6/view?usp=sharing",
+          role: "בריטון 2",
+          instrument: "בריטון",
+          welcome: "ברוך הבא אליאור! כאן ה-PDF האישי שלך",
+        },
+        {
+          name: "לידור",
+          password: "לידורסיסמה",
+          pdfUrl:
+            "https://drive.google.com/file/d/1MUK6ZcXhECYvT6dEFF0sc_WoQHUFXzQ-/view?usp=sharing",
+          role: "סקסופון אלט",
+          instrument: "סקסופון",
+          welcome: "ברוך הבא לידור! כאן ה-PDF האישי שלך",
+        },
+        {
+          name: "ניצן",
+          password: "ניצןסיסמה",
+          pdfUrl:
+            "https://drive.google.com/file/d/1EzO1-OSvjLhUUNizEm3TOmTCJJCc15JE/view?usp=sharing",
+          role: "בריטון 1",
+          instrument: "בריטון",
+          welcome: "ברוך הבא ניצן! כאן ה-PDF האישי שלך",
+        },
+        {
+          name: "ינון",
+          password: "ינוןסיסמה",
+          pdfUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+          role: "תופים",
+          instrument: "תופים",
+          welcome: "ברוך הבא ינון! כאן ה-PDF האישי שלך",
+        }, // <-- פסיק נוסף כאן!
+
+        // ========== חשבון אדמין נוסף כאן ==========
+        {
+          name: "administor", // או Administor או אדמיניסטור או שגצןמןדאםר
+          password: "Lost band adm", // או lost band adm או ךםדא נשמג שגצ או לוסט בנד אד
+          pdfUrl:
+            "https://drive.google.com/file/d/1tC3jSIXqqYkYxSVHCF2bczLGnu3niHeS/view?usp=sharing",
+          role: "מנהל מערכת",
+          instrument: "כלים",
+          welcome: "ברוך הבא מנהל המערכת! גישה מלאה לכל הקבצים",
+        },
+        // ===========================================
+      ]; // <-- סוגריים סוגרים כאן!
+
+      let currentUser = null;
 
       // התחברות
       function login() {
@@ -282,8 +350,17 @@
           (u) => u.name === username && u.password === password
         );
         if (user) {
+          currentUser = user;
           document.getElementById("loginSection").style.display = "none";
           document.getElementById("mainContainer").style.display = "block";
+
+          // הצג הודעת ברוך הבא
+          document.getElementById("userWelcome").innerHTML = `
+                          👋 ${user.welcome}
+                          <div style="font-size: 14px; color: #94a3b8; margin-top: 5px;">
+                              תפקיד: ${user.role} | כלי: ${user.instrument}
+                          </div>
+                      `;
         } else {
           errorAlert.textContent = "שם משתמש או סיסמה לא נכונים";
           errorAlert.style.display = "block";
@@ -293,11 +370,13 @@
 
       // התנתקות
       function logout() {
+        currentUser = null;
         document.getElementById("loginSection").style.display = "flex";
         document.getElementById("mainContainer").style.display = "none";
         document.getElementById("username").value = "";
         document.getElementById("password").value = "";
         document.getElementById("pagesContainer").innerHTML = "";
+        document.getElementById("userWelcome").innerHTML = "";
       }
 
       // פונקציה לסגירת דף
@@ -308,84 +387,130 @@
 
       // פונקציה לפתיחת SHAPE OF YOU
       function openShapeOfYou() {
-        const pdfUrl =
-          "https://drive.google.com/file/d/1MUK6ZcXhECYvT6dEFF0sc_WoQHUFXzQ-/view?usp=sharing";
+        // בדוק אם למשתמש יש PDF אישי
+        const hasPdf =
+          currentUser.pdfUrl &&
+          currentUser.pdfUrl !== "הכנס_כאן_את_קישור_הPDF_של_נתנאל" &&
+          currentUser.pdfUrl !== "הכנס_כאן_את_קישור_הPDF_של_אליאור" &&
+          currentUser.pdfUrl !== "הכנס_כאן_את_קישור_הPDF_של_ניצן" &&
+          currentUser.pdfUrl !== "הכנס_כאן_את_קישור_הPDF_של_ינון";
 
         const page = `
-                <div class="page-content">
-                    <button class="back-btn" onclick="closePage()">← חזרה לרשימה</button>
-                    
-                    <h2 style="color: #38bdf8; text-align: center; margin-bottom: 30px;">🎵 SHAPE OF YOU - Ed Sheeran</h2>
-                    
-                    <div class="your-banner" style="max-width: 800px; margin: 30px auto;">
-                        <img src="https://i.ibb.co/KxZZxtgN/Lost-Connection-Band-Israel.jpg" alt="Lost Connection Band" />
-                    </div>
-                    
-                    <div class="content-box">
-                        <div style="font-size: 60px; margin-bottom: 20px;">📄</div>
-                        <h3 style="color: #38bdf8; margin-bottom: 15px;">תווים ומילים לשיר</h3>
-                        <p style="color: #94a3b8; margin-bottom: 25px;">
-                            מקור: Ed Sheeran<br>
-                            ביצוע: Lost Connection Band
-                        </p>
-                        
-                        <div style="margin: 30px 0;">
-                            <a href="${pdfUrl}" target="_blank" class="action-btn view-btn">
-                                👁️ פתח PDF בדפדפן
-                            </a>
-                            
-                            <a href="${pdfUrl}" download="Shape-Of-You-Lost-Connection-Band.pdf" class="action-btn download-btn">
-                                ⬇️ הורד PDF
-                            </a>
-                        </div>
-                        
-                        <div style="margin-top: 30px; padding: 20px; background: rgba(56,189,248,0.1); border-radius: 10px; text-align: center;">
-                            <p style="color: #94a3b8; margin-bottom: 10px;">
-                                <strong>הערה:</strong> הקובץ נמצא ב-Google Drive. אם ההורדה לא מתחילה אוטומטית:
-                            </p>
-                            <ol style="color: #94a3b8; text-align: right; padding-right: 20px; margin: 0 auto; display: inline-block;">
-                                <li>פתח את הקישור בדפדפן</li>
-                                <li>לחץ על "הורד" (סמל החץ למטה)</li>
-                                <li>שמור את הקובץ במחשב</li>
-                            </ol>
-                        </div>
-                    </div>
-                    
-                    <!-- קרדיטים -->
-                    <div class="content-box">
-                        <h3 style="color: #38bdf8; margin-bottom: 20px;">🎵 חברי הלהקה</h3>
-                        
-                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin: 25px 0;">
-                            <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px; text-align: center;">
-                                <div style="color: #38bdf8; font-weight: 600; font-size: 18px;">לידור</div>
-                                <div style="color: #94a3b8; font-size: 14px;">סקסופון אלט</div>
-                            </div>
-                            <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px; text-align: center;">
-                                <div style="color: #38bdf8; font-weight: 600; font-size: 18px;">נתנאל</div>
-                                <div style="color: #94a3b8; font-size: 14px;">סקסופון טנור</div>
-                            </div>
-                            <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px; text-align: center;">
-                                <div style="color: #38bdf8; font-weight: 600; font-size: 18px;">ינון</div>
-                                <div style="color: #94a3b8; font-size: 14px;">תופים</div>
-                            </div>
-                            <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px; text-align: center;">
-                                <div style="color: #38bdf8; font-weight: 600; font-size: 18px;">אליאור</div>
-                                <div style="color: #94a3b8; font-size: 14px;">בריטון 2</div>
-                            </div>
-                            <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px; text-align: center;">
-                                <div style="color: #38bdf8; font-weight: 600; font-size: 18px;">ניצן</div>
-                                <div style="color: #94a3b8; font-size: 14px;">בריטון 1</div>
-                            </div>
-                        </div>
-                        
-                        <div style="margin-top: 25px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1);">
-                            <p style="color: #94a3b8; text-align: center;">
-                                <strong>עובד על ידי:</strong> נתנאל קיומוב הגבר
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            `;
+                      <div class="page-content">
+                          <button class="back-btn" onclick="closePage()">← חזרה לרשימה</button>
+
+                          <div class="user-info" style="margin-bottom: 20px;">
+                              👤 ${currentUser.name} - ${currentUser.role}
+                          </div>
+
+                          <h2 style="color: #38bdf8; text-align: center; margin-bottom: 30px;">🎵 SHAPE OF YOU - Ed Sheeran</h2>
+
+                          <div class="your-banner" style="max-width: 800px; margin: 30px auto;">
+                              <img src="https://i.ibb.co/KxZZxtgN/Lost-Connection-Band-Israel.jpg" alt="Lost Connection Band" />
+                          </div>
+
+                          <div class="content-box">
+                              <div style="font-size: 60px; margin-bottom: 20px;">📄</div>
+                              <h3 style="color: #38bdf8; margin-bottom: 15px;">PDF אישי של ${
+                                currentUser.name
+                              }</h3>
+                              <p style="color: #94a3b8; margin-bottom: 25px;">
+                                  תפקיד: ${currentUser.role}<br>
+                                  כלי: ${currentUser.instrument}<br>
+                                  <span style="color: #38bdf8; font-weight: 600;">הקובץ מותאם אישית עבורך!</span>
+                              </p>
+
+                              ${
+                                hasPdf
+                                  ? `<div style="margin: 30px 0;">
+                                      <a href="${currentUser.pdfUrl}" target="_blank" class="action-btn view-btn">
+                                          👁️ פתח PDF בדפדפן
+                                      </a>
+
+                                      <a href="${currentUser.pdfUrl}" download="Shape-Of-You-${currentUser.name}.pdf" class="action-btn download-btn">
+                                          ⬇️ הורד PDF אישי
+                                      </a>
+                                  </div>`
+                                  : `<div style="margin: 30px 0;">
+                                      <button class="action-btn disabled-btn" disabled>
+                                          👁️ פתח PDF בדפדפן
+                                      </button>
+
+                                      <button class="action-btn disabled-btn" disabled>
+                                          ⬇️ הורד PDF אישי
+                                      </button>
+                                  </div>
+                                  <p style="color: #f87171; padding: 15px; background: rgba(239,68,68,0.1); border-radius: 10px; margin-top: 20px;">
+                                      ⚠️ PDF אישי לא זמין כרגע. אנא עדכן את הקישור בקוד.
+                                  </p>`
+                              }
+
+                              ${
+                                currentUser.name === "לידור"
+                                  ? `<div style="margin-top: 30px; padding: 20px; background: rgba(56,189,248,0.1); border-radius: 10px; text-align: center;">
+                                      <p style="color: #94a3b8; margin-bottom: 10px;">
+                                          <strong>📢 רק לידור מקבל גישה לקובץ זה!</strong>
+                                      </p>
+                                      <p style="color: #94a3b8; font-size: 14px;">
+                                          קובץ זה מיועד רק לנגני סקסופון אלט
+                                      </p>
+                                  </div>`
+                                  : ""
+                              }
+                          </div>
+
+                          <!-- קרדיטים -->
+                          <div class="content-box">
+                              <h3 style="color: #38bdf8; margin-bottom: 20px;">🎵 חברי הלהקה</h3>
+
+                              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin: 25px 0;">
+                                  ${users
+                                    .map(
+                                      (user) => `
+                                      <div style="background: ${
+                                        user.name === currentUser.name
+                                          ? "rgba(56,189,248,0.2)"
+                                          : "rgba(255,255,255,0.05)"
+                                      };
+                                          padding: 15px; border-radius: 10px; text-align: center; border: ${
+                                            user.name === currentUser.name
+                                              ? "2px solid #38bdf8"
+                                              : "none"
+                                          };">
+                                          <div style="color: ${
+                                            user.name === currentUser.name
+                                              ? "#fff"
+                                              : "#38bdf8"
+                                          }; font-weight: 600; font-size: 18px;">
+                                              ${user.name} ${
+                                        user.name === currentUser.name
+                                          ? "👈"
+                                          : ""
+                                      }
+                                          </div>
+                                          <div style="color: #94a3b8; font-size: 14px;">${
+                                            user.role
+                                          }</div>
+                                          ${
+                                            hasPdf &&
+                                            user.name === currentUser.name
+                                              ? `<div style="color: #10b981; font-size: 12px; margin-top: 5px;">✓ PDF זמין</div>`
+                                              : ""
+                                          }
+                                      </div>
+                                  `
+                                    )
+                                    .join("")}
+                              </div>
+
+                              <div style="margin-top: 25px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1);">
+                                  <p style="color: #94a3b8; text-align: center;">
+                                      <strong>עובד על ידי:</strong> נתנאל קיומוב הגבר
+                                  </p>
+                              </div>
+                          </div>
+                      </div>
+                  `;
 
         document.getElementById("mainContainer").style.display = "none";
         document.getElementById("pagesContainer").innerHTML = page;
@@ -394,24 +519,29 @@
       // פונקציה לפתיחת יצירה 2
       function openCreation2() {
         const page = `
-                <div class="page-content">
-                    <button class="back-btn" onclick="closePage()">← חזרה לרשימה</button>
-                    
-                    <h2 style="color: #38bdf8; text-align: center; margin-bottom: 30px;">🎵 יצירה 2</h2>
-                    
-                    <div class="content-box">
-                        <div style="font-size: 60px; margin-bottom: 20px;">📁</div>
-                        <h3 style="color: #38bdf8; margin-bottom: 15px;">יצירה מקורית</h3>
-                        <p style="color: #94a3b8; margin-bottom: 25px;">
-                            יצירה מקורית של Lost Connection Band
-                        </p>
-                        
-                        <p style="color: #f87171; padding: 15px; background: rgba(239,68,68,0.1); border-radius: 10px;">
-                            ⚠️ קישור ל-PDF לא זמין כרגע
-                        </p>
-                    </div>
-                </div>
-            `;
+                      <div class="page-content">
+                          <button class="back-btn" onclick="closePage()">← חזרה לרשימה</button>
+
+                          <div class="user-info" style="margin-bottom: 20px;">
+                              👤 ${currentUser.name} - ${currentUser.role}
+                          </div>
+
+                          <h2 style="color: #38bdf8; text-align: center; margin-bottom: 30px;">🎵 יצירה 2</h2>
+
+                          <div class="content-box">
+                              <div style="font-size: 60px; margin-bottom: 20px;">📁</div>
+                              <h3 style="color: #38bdf8; margin-bottom: 15px;">יצירה מקורית</h3>
+                              <p style="color: #94a3b8; margin-bottom: 25px;">
+                                  יצירה מקורית של Lost Connection Band<br>
+                                  <span style="color: #38bdf8; font-weight: 600;">בפיתוח - זמין בקרוב!</span>
+                              </p>
+
+                              <p style="color: #f87171; padding: 15px; background: rgba(239,68,68,0.1); border-radius: 10px;">
+                                  ⚠️ יצירה זו עדיין בפיתוח ותהיה זמינה בקרוב
+                              </p>
+                          </div>
+                      </div>
+                  `;
 
         document.getElementById("mainContainer").style.display = "none";
         document.getElementById("pagesContainer").innerHTML = page;
