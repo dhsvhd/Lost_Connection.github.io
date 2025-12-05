@@ -328,7 +328,7 @@
           password: "אליאורסיסמה",
           pdfUrl:
             "https://drive.google.com/file/d/1WSVpCzpAwtL7-QijJgxShWFNy-Vp7ui6/view?usp=sharing",
-          videoUrl: "https://youtu.be/o84HUOAESfY", // 👈 הוספתי את הקישור של אליאור
+          videoUrl: "https://youtu.be/o84HUOAESfY",
           role: "בריטון 2",
           instrument: "בריטון",
           welcome: "ברוך הבא אליאור! כאן ה-PDF האישי שלך",
@@ -357,14 +357,14 @@
           name: "ינון",
           password: "ינוןסיסמה",
           pdfUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-          videoUrl: "https://youtu.be/o84HUOAESfY", // אותו קישור כמו אליאור זמנית
+          videoUrl: "https://youtu.be/VsExU_j28eM", // ינון מקבל את הסרטון של האדמין
           role: "תופים",
           instrument: "תופים",
           welcome: "ברוך הבא ינון! כאן ה-PDF האישי שלך",
         },
         {
-          name: "אדמין",
-          password: "אורי סיסמה בדוי",
+          name: "אדמין", // שיניתי את השם מ-administor לאדמין
+          password: "אורי סיסמה בדוי", // שיניתי את הסיסמה
           pdfUrl:
             "https://drive.google.com/file/d/1tC3jSIXqqYkYxSVHCF2bczLGnu3niHeS/view?usp=sharing",
           videoUrl: "https://youtu.be/VsExU_j28eM",
@@ -399,7 +399,7 @@
 
           // הצג הודעת ברוך הבא עם סימן
           const adminBadge =
-            user.name === "administor"
+            user.name === "אדמין"
               ? '<span class="admin-badge">👑 מנהל</span>'
               : "";
           const lidorBadge =
@@ -418,9 +418,13 @@
             user.name === "אליאור"
               ? '<span class="special-badge" style="background: linear-gradient(135deg, #3b82f6, #1d4ed8);">🎵 בריטון שני</span>'
               : "";
+          const yinonBadge =
+            user.name === "ינון"
+              ? '<span class="special-badge" style="background: linear-gradient(135deg, #f97316, #ea580c);">🥁 תופים</span>'
+              : "";
 
           document.getElementById("userWelcome").innerHTML = `
-                          ${adminBadge}${lidorBadge}${natanelBadge}${nitzanBadge}${eliorBadge}👋 ${user.welcome}
+                          ${adminBadge}${lidorBadge}${natanelBadge}${nitzanBadge}${eliorBadge}${yinonBadge}👋 ${user.welcome}
                           <div style="font-size: 14px; color: #94a3b8; margin-top: 5px;">
                               תפקיד: ${user.role} | כלי: ${user.instrument}
                           </div>
@@ -459,19 +463,20 @@
           currentUser.pdfUrl !== "הכנס_כאן_את_קישור_הPDF_של_ניצן" &&
           currentUser.pdfUrl !== "הכנס_כאן_את_קישור_הPDF_של_ינון";
 
-        const isAdmin = currentUser.name === "administor";
+        const isAdmin = currentUser.name === "אדמין";
         const isLidor = currentUser.name === "לידור";
         const isNatanel = currentUser.name === "נתנאל";
         const isNitzan = currentUser.name === "ניצן";
         const isElior = currentUser.name === "אליאור";
+        const isYinon = currentUser.name === "ינון";
         const hasAudioVideo =
-          isAdmin || isLidor || isNatanel || isNitzan || isElior;
+          isAdmin || isLidor || isNatanel || isNitzan || isElior || isYinon;
 
         // בחר את הסרטון המתאים לפי המשתמש
         let audioVideoUrl;
-        if (isAdmin) {
-          audioVideoUrl =
-            currentUser.videoUrl || "https://youtu.be/VsExU_j28eM";
+        if (isAdmin || isYinon) {
+          // ינון מקבל את אותו הסרטון כמו האדמין
+          audioVideoUrl = "https://youtu.be/VsExU_j28eM";
         } else if (isLidor) {
           audioVideoUrl =
             currentUser.videoUrl || "https://youtu.be/dkDFHH829sc";
@@ -521,6 +526,11 @@
                               ${
                                 isElior
                                   ? '<span class="special-badge" style="background: linear-gradient(135deg, #3b82f6, #1d4ed8);">🎵 בריטון שני</span>'
+                                  : ""
+                              }
+                              ${
+                                isYinon
+                                  ? '<span class="special-badge" style="background: linear-gradient(135deg, #f97316, #ea580c);">🥁 תופים</span>'
                                   : ""
                               }
                               👤 ${currentUser.name} - ${currentUser.role}
@@ -599,6 +609,8 @@
                                           ? "#ec4899"
                                           : isElior
                                           ? "#3b82f6"
+                                          : isYinon
+                                          ? "#f97316"
                                           : "#38bdf8"
                                       }; font-weight: 600;">
                                           ${
@@ -612,6 +624,8 @@
                                               ? "גישה לבריטון ראשון"
                                               : isElior
                                               ? "גישה לבריטון שני"
+                                              : isYinon
+                                              ? "גישה לתופים"
                                               : "גישה רגילה"
                                           }
                                       </span>
@@ -648,6 +662,8 @@
                                       ? "rgba(236,72,153,0.1)"
                                       : isElior
                                       ? "rgba(59,130,246,0.1)"
+                                      : isYinon
+                                      ? "rgba(249,115,22,0.1)"
                                       : "rgba(56,189,248,0.1)"
                                   }; border-radius: 10px;">
                                       <p style="color: ${
@@ -661,6 +677,8 @@
                                           ? "#f9a8d4"
                                           : isElior
                                           ? "#93c5fd"
+                                          : isYinon
+                                          ? "#fdba74"
                                           : "#38bdf8"
                                       }; font-size: 14px;">
                                           💡 טיפ: פתח את ה-PDF בחלון נפרד וצפה בסרטון במקביל לתרגול האינטראקציה.
@@ -680,7 +698,7 @@
                                       <div style="background: ${
                                         user.name === currentUser.name
                                           ? "rgba(56,189,248,0.2)"
-                                          : user.name === "administor"
+                                          : user.name === "אדמין"
                                           ? "rgba(245,158,11,0.2)"
                                           : user.name === "לידור"
                                           ? "rgba(139,92,246,0.2)"
@@ -690,12 +708,14 @@
                                           ? "rgba(236,72,153,0.2)"
                                           : user.name === "אליאור"
                                           ? "rgba(59,130,246,0.2)"
+                                          : user.name === "ינון"
+                                          ? "rgba(249,115,22,0.2)"
                                           : "rgba(255,255,255,0.05)"
                                       };
                                           padding: 15px; border-radius: 10px; text-align: center; border: ${
                                             user.name === currentUser.name
                                               ? "2px solid #38bdf8"
-                                              : user.name === "administor"
+                                              : user.name === "אדמין"
                                               ? "2px solid #f59e0b"
                                               : user.name === "לידור"
                                               ? "2px solid #8b5cf6"
@@ -705,12 +725,14 @@
                                               ? "2px solid #ec4899"
                                               : user.name === "אליאור"
                                               ? "2px solid #3b82f6"
+                                              : user.name === "ינון"
+                                              ? "2px solid #f97316"
                                               : "none"
                                           };">
                                           <div style="color: ${
                                             user.name === currentUser.name
                                               ? "#fff"
-                                              : user.name === "administor"
+                                              : user.name === "אדמין"
                                               ? "#fbbf24"
                                               : user.name === "לידור"
                                               ? "#c4b5fd"
@@ -720,12 +742,14 @@
                                               ? "#f9a8d4"
                                               : user.name === "אליאור"
                                               ? "#93c5fd"
+                                              : user.name === "ינון"
+                                              ? "#fdba74"
                                               : "#38bdf8"
                                           }; font-weight: 600; font-size: 18px;">
                                               ${user.name} ${
                                         user.name === currentUser.name
                                           ? "👈"
-                                          : user.name === "administor"
+                                          : user.name === "אדמין"
                                           ? "👑"
                                           : ""
                                       }
@@ -743,13 +767,14 @@
                                               : ""
                                           }
                                           ${
-                                            user.name === "administor" ||
+                                            user.name === "אדמין" ||
                                             user.name === "לידור" ||
                                             user.name === "נתנאל" ||
                                             user.name === "ניצן" ||
-                                            user.name === "אליאור"
+                                            user.name === "אליאור" ||
+                                            user.name === "ינון"
                                               ? `<div style="color: ${
-                                                  user.name === "administor"
+                                                  user.name === "אדמין"
                                                     ? "#f59e0b"
                                                     : user.name === "לידור"
                                                     ? "#8b5cf6"
@@ -757,7 +782,9 @@
                                                     ? "#10b981"
                                                     : user.name === "ניצן"
                                                     ? "#ec4899"
-                                                    : "#3b82f6"
+                                                    : user.name === "אליאור"
+                                                    ? "#3b82f6"
+                                                    : "#f97316"
                                                 }; font-size: 12px; margin-top: 5px;">🎵 PDF+שמע</div>`
                                               : ""
                                           }
@@ -793,11 +820,12 @@
 
       // פונקציה לפתיחת יצירה 2
       function openCreation2() {
-        const isAdmin = currentUser.name === "administor";
+        const isAdmin = currentUser.name === "אדמין";
         const isLidor = currentUser.name === "לידור";
         const isNatanel = currentUser.name === "נתנאל";
         const isNitzan = currentUser.name === "ניצן";
         const isElior = currentUser.name === "אליאור";
+        const isYinon = currentUser.name === "ינון";
 
         const page = `
                       <div class="page-content">
@@ -827,6 +855,11 @@
                               ${
                                 isElior
                                   ? '<span class="special-badge" style="background: linear-gradient(135deg, #3b82f6, #1d4ed8);">🎵 בריטון שני</span>'
+                                  : ""
+                              }
+                              ${
+                                isYinon
+                                  ? '<span class="special-badge" style="background: linear-gradient(135deg, #f97316, #ea580c);">🥁 תופים</span>'
                                   : ""
                               }
                               👤 ${currentUser.name} - ${currentUser.role}
