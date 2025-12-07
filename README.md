@@ -1132,7 +1132,7 @@
       const users = [
         {
           name: "נתנאל",
-          password: "נתנאלסיסמה",
+          password: "NHK2012",
           pdfUrl:
             "https://drive.google.com/file/d/1bOLg2TViF8-36u01JsVyJ3eqcx8Nvstt/view?usp=sharing",
           videoUrl: "https://youtu.be/-R_QdkLAJTI",
@@ -1142,7 +1142,7 @@
         },
         {
           name: "אליאור",
-          password: "אליאורסיסמה",
+          password: "036305415",
           pdfUrl:
             "https://drive.google.com/file/d/1WSVpCzpAwtL7-QijJgxShWFNy-Vp7ui6/view?usp=sharing",
           videoUrl: "https://youtu.be/o84HUOAESfY",
@@ -1152,7 +1152,7 @@
         },
         {
           name: "לידור",
-          password: "לידורסיסמה",
+          password: "1706",
           pdfUrl:
             "https://drive.google.com/file/d/1MUK6ZcXhECYvT6dEFF0sc_WoQHUFXzQ-/view?usp=sharing",
           videoUrl: "https://youtu.be/dkDFHH829sc",
@@ -1162,7 +1162,7 @@
         },
         {
           name: "ניצן",
-          password: "ניצןסיסמה",
+          password: "lost connection 2026",
           pdfUrl:
             "https://drive.google.com/file/d/1EzO1-OSvjLhUUNizEm3TOmTCJJCc15JE/view?usp=sharing",
           videoUrl: "https://youtu.be/qsmdqtX8-qg",
@@ -1172,7 +1172,7 @@
         },
         {
           name: "ינון",
-          password: "ינוןסיסמה",
+          password: "1234",
           pdfUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
           videoUrl: "https://youtu.be/VsExU_j28eM",
           role: "תופים",
