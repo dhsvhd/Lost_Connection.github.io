@@ -1162,7 +1162,7 @@
         },
         {
           name: "ניצן",
-          password: "lost connection 2026",
+          password: "lost connection 2026",
           pdfUrl:
             "https://drive.google.com/file/d/1EzO1-OSvjLhUUNizEm3TOmTCJJCc15JE/view?usp=sharing",
           videoUrl: "https://youtu.be/qsmdqtX8-qg",
