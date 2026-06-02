@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <title>התחברות - יצירות דיגיטליות</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <!-- ── מסך בחירת פלטפורמה ── -->
+  <section class="platform-section" id="platformSection" style="display:flex;">
+    <h2 class="platform-title">📱 בחר את הפלטפורמה שלך</h2>
+    <div class="platform-options">
+      <button class="platform-btn phone-btn" onclick="selectPlatform('phone')">
+        <span class="platform-icon">📱</span> טלפון נייד
+      </button>
+      <button class="platform-btn pc-btn" onclick="selectPlatform('pc')">
+        <span class="platform-icon">💻</span> מחשב
+      </button>
+    </div>
+  </section>
+
+  <!-- ── מסך התחברות ── -->
+  <section class="login-section" id="loginSection" style="display:none;">
+    <div class="login-container">
+      <div class="your-banner">
+        <img src="https://i.ibb.co/KxZZxtgN/Lost-Connection-Band-Israel.jpg" alt="Lost Connection Band" />
+      </div>
+      <div class="login-box">
+        <h2 class="login-title">כניסה למערכת</h2>
+        <div id="errorAlert" style="display:none;color:#f87171;text-align:center;margin-bottom:20px;">
+          שם משתמש או סיסמה לא נכונים
+        </div>
+        <input id="username" type="text"     placeholder="הכנס שם משתמש" autofocus />
+        <input id="password" type="password" placeholder="הכנס סיסמה" />
+        <div class="remember-me">
+          <input type="checkbox" id="rememberMe" class="remember-checkbox" />
+          <label for="rememberMe" class="remember-label">זכור אותי</label>
+        </div>
+        <button class="login-btn" onclick="login()">התחבר למערכת</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── מסך ראשי ── -->
+  <div class="main-container" id="mainContainer" style="display:none;">
+    <div class="your-banner">
+      <img src="https://i.ibb.co/KxZZxtgN/Lost-Connection-Band-Israel.jpg" alt="Lost Connection Band" />
+    </div>
+
+    <div id="userWelcome" class="user-info"></div>
+
+    <h2 class="creations-title">📁 ספריית היצירות שלי</h2>
+
+    <div class="creations-list">
+      <div class="creation-card" onclick="openShapeOfYou()">
+        <div class="creation-name">SHAPE OF YOU</div>
+        <div style="color:#94a3b8;font-size:16px;margin-top:8px;">Ed Sheeran | Lost Connection Band Cover</div>
+      </div>
+      <div class="creation-card" onclick="openCreation2()">
+        <div class="creation-name">יצירה 2</div>
+        <div style="color:#94a3b8;font-size:16px;margin-top:8px;">פרויקט שני</div>
+      </div>
+      <div class="creation-card" onclick="openCalendar()">
+        <div class="creation-name">📅 לוח שנה וזמנים</div>
+        <div style="color:#94a3b8;font-size:16px;margin-top:8px;">צפייה בתאריכים, זמנים וקביעת תזכורות</div>
+      </div>
+    </div>
+
+    <div class="logout-section">
+      <button class="logout-btn" onclick="logout()">🔓 התנתק מהמערכת</button>
+    </div>
+  </div>
+
+  <!-- ── דפים דינמיים ── -->
+  <div id="pagesContainer"></div>
+
+  <!-- ── EmailJS ── -->
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <script>emailjs.init("8p42Rj5bRe4iv_E-G");</script>
+
+  <!-- ── סקריפטים (סדר חשוב!) ── -->
+  <script src="utils.js"></script>
+  <script src="auth.js"></script>
+  <script src="calendar.js"></script>
+  <script src="pages.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      checkRememberedUser();
+
+      const saved = localStorage.getItem("reminderMinutesBefore");
+      if (saved) reminderMinutesBefore = parseInt(saved);
+
+      setTimeout(checkReminders, 2000);
+      setInterval(checkReminders, 30000);
+
+      if ("Notification" in window) {
+        notificationPermission = Notification.permission === "granted";
+      }
+
+      const usernameInput = document.getElementById("username");
+      const passwordInput = document.getElementById("password");
+
+      usernameInput?.addEventListener("keypress", e => {
+        if (e.key === "Enter") { e.preventDefault(); passwordInput?.focus(); }
+      });
+      passwordInput?.addEventListener("keypress", e => {
+        if (e.key === "Enter") { e.preventDefault(); login(); }
+      });
+    });
+  </script>
+
+</body>
+</html>
